@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>BlackRiver AI</title>
-  <meta name="description" content="BlackRiver AI builds and operates AI products, automation systems and infrastructure." />
-  <meta name="theme-color" content="#050609" />
+  <meta name="description" content="BlackRiver AI builds and owns AI products, infrastructure and automation systems." />
+  <meta name="theme-color" content="#030406" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="BlackRiver AI" />
-  <meta property="og:description" content="Products, systems and infrastructure for applied intelligence." />
+  <meta property="og:description" content="AI products, infrastructure and automation systems." />
   <meta property="og:url" content="https://blackriver.ai/" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,26 +23,25 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif']
-          },
+          fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'] },
           colors: {
-            blackriver: {
-              black: '#050609',
-              graphite: '#0A0D12',
-              slate: '#111722',
+            br: {
+              black: '#030406',
+              ink: '#07090D',
+              graphite: '#0D1117',
+              panel: '#111722',
               line: 'rgba(255,255,255,.10)',
-              text: '#F5F7FA',
-              muted: '#9CA6B5',
-              faint: '#5D6675',
-              blue: '#7BA7FF',
-              cyan: '#8DF1FF',
-              steel: '#D7DEE8'
+              text: '#F6F7F9',
+              muted: '#9AA3B2',
+              dim: '#5F6877',
+              blue: '#8DB4FF',
+              silver: '#DDE3EC',
+              frost: '#F7FAFF'
             }
           },
           boxShadow: {
-            deep: '0 40px 140px rgba(0,0,0,.55)',
-            soft: '0 24px 80px rgba(0,0,0,.35)'
+            deep: '0 48px 160px rgba(0,0,0,.58)',
+            soft: '0 22px 80px rgba(0,0,0,.32)'
           }
         }
       }
@@ -52,9 +51,8 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #050609;
+      --bg: #030406;
       --line: rgba(255,255,255,.10);
-      --muted: #9CA6B5;
     }
 
     * { box-sizing: border-box; }
@@ -62,54 +60,49 @@
     html, body {
       min-height: 100%;
       background: var(--bg);
-    }
-
-    body {
-      margin: 0;
+      color: #F6F7F9;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #F5F7FA;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
+      overflow-x: hidden;
     }
 
     ::selection {
-      background: rgba(123,167,255,.35);
       color: #fff;
+      background: rgba(141,180,255,.35);
     }
 
-    .bg-field {
+    .field {
       position: fixed;
       inset: 0;
+      pointer-events: none;
       z-index: 0;
-      pointer-events: none;
       background:
-        radial-gradient(circle at 50% -15%, rgba(123,167,255,.18), transparent 36%),
-        radial-gradient(circle at 90% 18%, rgba(141,241,255,.08), transparent 30%),
-        linear-gradient(180deg, #050609 0%, #070A0F 55%, #050609 100%);
+        radial-gradient(circle at 50% -18%, rgba(141,180,255,.16), transparent 34%),
+        radial-gradient(circle at 86% 18%, rgba(255,255,255,.06), transparent 28%),
+        linear-gradient(180deg, #030406 0%, #06080D 52%, #030406 100%);
     }
 
-    .bg-lines {
-      position: fixed;
+    .field::after {
+      content: "";
+      position: absolute;
       inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      opacity: .32;
+      opacity: .26;
       background-image:
-        linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 96px 96px;
-      mask-image: radial-gradient(circle at 50% 12%, black, transparent 72%);
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px);
+      background-size: 88px 88px;
+      mask-image: radial-gradient(circle at 50% 8%, black 0%, transparent 70%);
     }
 
     .grain::after {
       content: "";
       position: fixed;
       inset: 0;
+      z-index: 100;
       pointer-events: none;
-      z-index: 90;
-      opacity: .035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
     }
 
     .glass {
@@ -117,88 +110,84 @@
       border: 1px solid rgba(255,255,255,.10);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 30px 90px rgba(0,0,0,.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 30px 100px rgba(0,0,0,.30);
     }
 
     .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.032));
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.032));
       border: 1px solid rgba(255,255,255,.10);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
     }
 
-    .thin-panel {
-      background: rgba(255,255,255,.032);
-      border: 1px solid rgba(255,255,255,.085);
+    .quiet {
+      background: rgba(255,255,255,.028);
+      border: 1px solid rgba(255,255,255,.08);
     }
 
-    .hero-title {
-      letter-spacing: -.085em;
-      line-height: .84;
+    .hero {
+      letter-spacing: -.082em;
+      line-height: .86;
     }
 
-    .text-sheen {
-      background: linear-gradient(180deg, #fff 0%, #EEF3FA 42%, #8D98AA 100%);
+    .sheen {
+      background: linear-gradient(180deg, #fff 0%, #F0F3F7 42%, #A1A9B8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .accent-text {
-      background: linear-gradient(110deg, #D7DEE8 0%, #7BA7FF 44%, #8DF1FF 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .fade-up {
+    .fade {
       opacity: 0;
       transform: translateY(18px);
-      animation: fadeUp .85s cubic-bezier(.22,.72,.22,1) forwards;
+      animation: fade .9s cubic-bezier(.2,.75,.22,1) forwards;
+    }
+    .d1 { animation-delay: .08s; }
+    .d2 { animation-delay: .16s; }
+    .d3 { animation-delay: .24s; }
+
+    @keyframes fade { to { opacity: 1; transform: translateY(0); } }
+
+    .mark-path {
+      stroke-dasharray: 180;
+      stroke-dashoffset: 180;
+      animation: draw 1.4s cubic-bezier(.2,.7,.2,1) forwards .2s;
     }
 
-    .delay-1 { animation-delay: .08s; }
-    .delay-2 { animation-delay: .16s; }
-    .delay-3 { animation-delay: .24s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
 
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
+    .slow {
+      animation: slow 16s ease-in-out infinite;
+    }
+    @keyframes slow {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(.5deg); }
     }
 
-    .river-mark path {
-      stroke-dasharray: 120;
-      stroke-dashoffset: 120;
-      animation: draw 1.7s ease forwards .25s;
-    }
-
-    @keyframes draw {
-      to { stroke-dashoffset: 0; }
-    }
-
-    .slow-drift {
-      animation: drift 14s ease-in-out infinite;
-    }
-
-    @keyframes drift {
-      0%,100% { transform: translateY(0) translateX(0); }
-      50% { transform: translateY(-14px) translateX(8px); }
-    }
-
-    .card {
+    .hover-card {
       transition: transform .28s ease, border-color .28s ease, background .28s ease;
     }
-
-    .card:hover {
+    .hover-card:hover {
       transform: translateY(-5px);
-      border-color: rgba(215,222,232,.22);
-      background: rgba(255,255,255,.055);
+      background: rgba(255,255,255,.052);
+      border-color: rgba(255,255,255,.16);
     }
 
-    .button-primary {
-      background: #F5F7FA;
-      color: #050609;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 18px 55px rgba(123,167,255,.14);
+    .button {
+      transition: transform .22s ease, background .22s ease, border-color .22s ease;
     }
+    .button:hover { transform: translateY(-1px); }
 
-    .button-primary:hover {
-      background: #DDE6F2;
+    .button-light {
+      background: #F6F7F9;
+      color: #030406;
+    }
+    .button-light:hover { background: #DDE3EC; }
+
+    .river-line {
+      position: absolute;
+      inset-inline: 0;
+      height: 1px;
+      opacity: .55;
+      background: linear-gradient(90deg, transparent, rgba(141,180,255,.8), rgba(255,255,255,.55), transparent);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -213,29 +202,29 @@
 </head>
 
 <body class="grain">
-  <div class="bg-field"></div>
-  <div class="bg-lines"></div>
+  <div class="field"></div>
 
   <header id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <nav class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-      <div class="mt-5 flex h-14 items-center justify-between rounded-full border border-white/10 bg-black/25 px-4 backdrop-blur-2xl">
+      <div class="mt-5 flex h-14 items-center justify-between rounded-full border border-white/10 bg-black/28 px-4 backdrop-blur-2xl">
         <a href="#" class="flex items-center gap-3" aria-label="BlackRiver AI">
-          <svg class="h-8 w-8 river-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="6" y="6" width="52" height="52" rx="16" stroke="rgba(255,255,255,.18)" />
-            <path d="M18 39C27 25 37 42 46 20" stroke="#F5F7FA" stroke-width="4.4" stroke-linecap="round" />
-            <path d="M18 28C27 14 37 31 46 13" stroke="#7BA7FF" stroke-width="3.2" stroke-linecap="round" opacity=".85" />
+          <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)" />
+            <path class="mark-path" d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F6F7F9" stroke-width="4.6" stroke-linecap="round"/>
+            <path class="mark-path" d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/>
           </svg>
           <span class="text-sm font-semibold tracking-tight">BlackRiver AI</span>
         </a>
 
-        <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/55">
-          <a href="#work" class="hover:text-white transition">Work</a>
+        <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/52">
+          <a href="#house" class="hover:text-white transition">House</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
+          <a href="#systems" class="hover:text-white transition">Systems</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
         </div>
 
-        <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hidden sm:inline-flex rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/70 hover:bg-white/8 hover:text-white transition">
+        <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hidden sm:inline-flex rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/68 hover:bg-white/8 hover:text-white transition">
           TokenOptimizer
         </a>
 
@@ -245,9 +234,10 @@
         </button>
       </div>
 
-      <div id="mobileMenu" class="hidden md:hidden mt-3 rounded-3xl border border-white/10 bg-black/80 p-3 backdrop-blur-2xl">
-        <a href="#work" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Work</a>
+      <div id="mobileMenu" class="hidden md:hidden mt-3 rounded-3xl border border-white/10 bg-black/82 p-3 backdrop-blur-2xl">
+        <a href="#house" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">House</a>
         <a href="#portfolio" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Portfolio</a>
+        <a href="#systems" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Systems</a>
         <a href="#company" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Company</a>
         <a href="#contact" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Contact</a>
         <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">TokenOptimizer</a>
@@ -258,109 +248,124 @@
   <main class="relative z-10">
     <section class="min-h-screen flex items-center pt-28 pb-20">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 w-full">
-        <div class="grid lg:grid-cols-[1.15fr_.85fr] gap-16 lg:gap-24 items-center">
-          <div class="fade-up">
-            <p class="mb-8 text-xs uppercase tracking-[.34em] text-white/36 font-semibold">
-              Products · Systems · Infrastructure
+        <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-16 lg:gap-24 items-center">
+          <div class="fade">
+            <p class="mb-8 text-xs uppercase tracking-[.34em] text-white/34 font-semibold">
+              Applied intelligence company
             </p>
 
-            <h1 class="hero-title text-[4.4rem] sm:text-[6.4rem] lg:text-[8.6rem] font-black">
-              <span class="text-sheen">BlackRiver</span><br />
+            <h1 class="hero text-[4.15rem] sm:text-[6.2rem] lg:text-[8.3rem] font-black">
+              <span class="sheen">BlackRiver</span><br />
               <span class="text-white">AI</span>
             </h1>
 
-            <p class="mt-8 max-w-2xl text-xl sm:text-2xl leading-9 text-white/58 font-light">
-              We build and operate AI products, automation systems and infrastructure.
+            <p class="mt-8 max-w-2xl text-xl sm:text-2xl leading-9 text-white/56 font-light">
+              A quiet house for AI products, automation systems and infrastructure.
             </p>
 
             <div class="mt-10 flex flex-col sm:flex-row gap-3">
-              <a href="#work" class="button-primary inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold transition">
-                Explore the work
+              <a href="#portfolio" class="button button-light inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold">
+                View portfolio
               </a>
-              <a href="#contact" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white transition">
-                Start a conversation
+              <a href="#contact" class="button inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white">
+                Contact
               </a>
             </div>
           </div>
 
-          <div class="relative fade-up delay-1">
-            <div class="absolute -inset-10 rounded-full bg-blackriver-blue/10 blur-3xl"></div>
-            <div class="relative slow-drift">
-              <div class="panel rounded-[2.25rem] p-6 sm:p-8 shadow-deep">
-                <div class="aspect-square rounded-[1.8rem] border border-white/10 bg-black/20 relative overflow-hidden flex items-center justify-center">
-                  <div class="absolute inset-0 opacity-50" style="background: radial-gradient(circle at 50% 30%, rgba(123,167,255,.16), transparent 42%), radial-gradient(circle at 50% 75%, rgba(141,241,255,.09), transparent 38%);"></div>
+          <div class="relative fade d1">
+            <div class="absolute -inset-16 rounded-full bg-br-blue/10 blur-3xl"></div>
 
-                  <svg class="relative z-10 w-[74%] h-[74%]" viewBox="0 0 420 420" fill="none" aria-hidden="true">
-                    <circle cx="210" cy="210" r="156" stroke="rgba(255,255,255,.08)" />
-                    <circle cx="210" cy="210" r="106" stroke="rgba(255,255,255,.10)" />
-                    <path d="M91 266C139 177 197 287 256 179C278 140 300 119 329 106" stroke="url(#g1)" stroke-width="13" stroke-linecap="round"/>
-                    <path d="M91 196C141 106 200 217 258 109C280 70 303 50 329 36" stroke="url(#g2)" stroke-width="9" stroke-linecap="round" opacity=".75"/>
-                    <circle cx="91" cy="266" r="5" fill="#F5F7FA"/>
-                    <circle cx="329" cy="106" r="5" fill="#8DF1FF"/>
-                    <defs>
-                      <linearGradient id="g1" x1="91" x2="329" y1="266" y2="106">
-                        <stop stop-color="#F5F7FA"/>
-                        <stop offset=".55" stop-color="#7BA7FF"/>
-                        <stop offset="1" stop-color="#8DF1FF"/>
-                      </linearGradient>
-                      <linearGradient id="g2" x1="91" x2="329" y1="196" y2="36">
-                        <stop stop-color="#5D6675"/>
-                        <stop offset=".6" stop-color="#7BA7FF"/>
-                        <stop offset="1" stop-color="#F5F7FA"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
+            <div class="relative slow">
+              <div class="panel rounded-[2.4rem] p-6 sm:p-8 shadow-deep">
+                <div class="relative aspect-square rounded-[1.95rem] border border-white/10 bg-black/22 overflow-hidden">
+                  <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 30%, rgba(141,180,255,.14), transparent 42%), radial-gradient(circle at 50% 78%, rgba(255,255,255,.055), transparent 36%);"></div>
+                  <div class="river-line top-[32%]"></div>
+                  <div class="river-line top-[62%] opacity-30"></div>
 
-                  <div class="absolute bottom-5 left-5 right-5 flex justify-between text-[11px] uppercase tracking-[.22em] text-white/28">
-                    <span>Build</span>
-                    <span>Operate</span>
-                    <span>Scale</span>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <svg class="w-[72%] h-[72%]" viewBox="0 0 420 420" fill="none" aria-hidden="true">
+                      <circle cx="210" cy="210" r="158" stroke="rgba(255,255,255,.07)" />
+                      <circle cx="210" cy="210" r="104" stroke="rgba(255,255,255,.09)" />
+                      <path d="M78 263C130 176 185 286 247 178C274 132 304 109 342 92" stroke="url(#riverA)" stroke-width="13.5" stroke-linecap="round"/>
+                      <path d="M78 198C131 110 187 219 248 111C275 65 305 43 342 28" stroke="url(#riverB)" stroke-width="8.5" stroke-linecap="round" opacity=".75"/>
+                      <path d="M104 324C164 248 216 344 309 230" stroke="rgba(255,255,255,.20)" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+                      <defs>
+                        <linearGradient id="riverA" x1="78" x2="342" y1="263" y2="92">
+                          <stop stop-color="#F6F7F9"/>
+                          <stop offset=".55" stop-color="#8DB4FF"/>
+                          <stop offset="1" stop-color="#DDE3EC"/>
+                        </linearGradient>
+                        <linearGradient id="riverB" x1="78" x2="342" y1="198" y2="28">
+                          <stop stop-color="#5F6877"/>
+                          <stop offset=".55" stop-color="#8DB4FF"/>
+                          <stop offset="1" stop-color="#F6F7F9"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+
+                  <div class="absolute bottom-5 left-5 right-5 flex justify-between text-[10px] uppercase tracking-[.24em] text-white/24">
+                    <span>Products</span>
+                    <span>Systems</span>
+                    <span>Capital</span>
                   </div>
                 </div>
               </div>
 
-              <div class="absolute -bottom-6 -left-6 hidden sm:block glass rounded-3xl p-5 w-56">
-                <p class="text-[11px] uppercase tracking-[.22em] text-white/34 font-semibold">First product</p>
+              <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="absolute -bottom-6 -left-5 hidden sm:block glass rounded-[1.7rem] p-5 w-60 hover:bg-white/[.07] transition">
+                <p class="text-[10px] uppercase tracking-[.24em] text-white/34 font-semibold">Portfolio asset</p>
                 <p class="mt-2 text-xl font-bold">TokenOptimizer</p>
-                <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="mt-3 inline-block text-sm text-blackriver-blue hover:text-white transition">Open website →</a>
-              </div>
+                <p class="mt-2 text-sm text-white/38">AI cost intelligence.</p>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="work" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.018]">
+    <section id="house" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div class="max-w-3xl">
-          <p class="text-xs uppercase tracking-[.34em] text-white/36 font-semibold mb-6">Work</p>
-          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-            A small group building useful systems.
-          </h2>
+        <div class="grid lg:grid-cols-[.78fr_1.22fr] gap-14 lg:gap-20">
+          <div>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">House</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
+              Built to own more than one idea.
+            </h2>
+          </div>
+
+          <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
+            <p>
+              BlackRiver AI is the company behind a portfolio of software assets, enterprise systems and applied AI experiments.
+            </p>
+            <p class="mt-6">
+              The brand stays broad. The products stay focused.
+            </p>
+          </div>
         </div>
 
         <div class="mt-16 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
-          <article class="bg-blackriver-black p-7 sm:p-9">
-            <p class="text-sm text-white/36 mb-10">01</p>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">01</p>
             <h3 class="text-2xl font-bold">Products</h3>
-            <p class="mt-4 text-white/50 leading-7">
-              Commercial software, SaaS products, internal tools and developer-facing platforms.
+            <p class="mt-4 text-white/48 leading-7">
+              Independent software assets with clear markets, pricing and distribution.
             </p>
           </article>
 
-          <article class="bg-blackriver-black p-7 sm:p-9">
-            <p class="text-sm text-white/36 mb-10">02</p>
-            <h3 class="text-2xl font-bold">Enterprise systems</h3>
-            <p class="mt-4 text-white/50 leading-7">
-              Automation, AI deployment, cost analysis and operational infrastructure for companies.
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">02</p>
+            <h3 class="text-2xl font-bold">Systems</h3>
+            <p class="mt-4 text-white/48 leading-7">
+              Automation, infrastructure and AI operations work for companies.
             </p>
           </article>
 
-          <article class="bg-blackriver-black p-7 sm:p-9">
-            <p class="text-sm text-white/36 mb-10">03</p>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">03</p>
             <h3 class="text-2xl font-bold">Labs</h3>
-            <p class="mt-4 text-white/50 leading-7">
-              Experiments around agents, voice interfaces, local models and machine workflows.
+            <p class="mt-4 text-white/48 leading-7">
+              Private exploration around agents, voice, local models and new workflows.
             </p>
           </article>
         </div>
@@ -369,41 +374,41 @@
 
     <section id="portfolio" class="py-24 sm:py-32">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-[.85fr_1.15fr] gap-14 lg:gap-20 items-start">
+        <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
           <div>
-            <p class="text-xs uppercase tracking-[.34em] text-white/36 font-semibold mb-6">Portfolio</p>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Portfolio</p>
             <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-              Independent products under one house.
+              Products with their own surface area.
             </h2>
           </div>
 
           <div class="grid gap-4">
-            <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="card panel rounded-[2rem] p-7 sm:p-8 block">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
+            <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hover-card panel rounded-[2rem] p-7 sm:p-8 block">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
                 <div>
-                  <p class="text-xs uppercase tracking-[.24em] text-blackriver-blue font-semibold">Live</p>
-                  <h3 class="mt-4 text-3xl sm:text-4xl font-black tracking-[-.04em]">TokenOptimizer</h3>
-                  <p class="mt-4 max-w-2xl text-white/52 leading-7">
-                    AI cost intelligence and optimization. A focused product, not the full identity of the company.
+                  <p class="text-xs uppercase tracking-[.24em] text-br-blue font-semibold">Live</p>
+                  <h3 class="mt-4 text-3xl sm:text-4xl font-black tracking-[-.045em]">TokenOptimizer</h3>
+                  <p class="mt-4 max-w-2xl text-white/50 leading-7">
+                    AI cost intelligence and optimization for companies using LLMs at scale.
                   </p>
                 </div>
-                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/55">Open →</span>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52">Open →</span>
               </div>
             </a>
 
-            <div class="card thin-panel rounded-[2rem] p-7 sm:p-8">
-              <p class="text-xs uppercase tracking-[.24em] text-white/34 font-semibold">In development</p>
-              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.035em]">Automation systems</h3>
-              <p class="mt-4 text-white/48 leading-7">
-                Internal and client-facing systems that move repetitive work from people to software.
+            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
+              <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Private</p>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Automation systems</h3>
+              <p class="mt-4 text-white/46 leading-7">
+                Software systems that turn repetitive internal work into controlled processes.
               </p>
             </div>
 
-            <div class="card thin-panel rounded-[2rem] p-7 sm:p-8">
-              <p class="text-xs uppercase tracking-[.24em] text-white/34 font-semibold">Research</p>
-              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.035em]">Agents, voice and local AI</h3>
-              <p class="mt-4 text-white/48 leading-7">
-                Long-term exploration around practical agent workflows, voice-first interfaces and local model infrastructure.
+            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
+              <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Research</p>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Agents, voice and local AI</h3>
+              <p class="mt-4 text-white/46 leading-7">
+                Practical experiments around agent workflows, voice interfaces and local model infrastructure.
               </p>
             </div>
           </div>
@@ -411,24 +416,43 @@
       </div>
     </section>
 
-    <section class="py-24 sm:py-32 border-y border-white/10 bg-white/[.018]">
+    <section id="systems" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div class="panel rounded-[2.5rem] p-8 sm:p-12 lg:p-16">
-          <div class="grid lg:grid-cols-[.9fr_1.1fr] gap-12 items-start">
+          <div class="grid lg:grid-cols-[.85fr_1.15fr] gap-12 items-start">
             <div>
-              <p class="text-xs uppercase tracking-[.34em] text-white/36 font-semibold mb-6">Position</p>
+              <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Position</p>
               <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-                No theatre. No AI noise.
+                Quiet infrastructure.
               </h2>
             </div>
 
-            <div class="text-lg sm:text-xl leading-9 text-white/58 font-light">
+            <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
               <p>
-                BlackRiver AI is built as a holding and operating company for software assets, automation systems and AI infrastructure.
+                The most valuable systems usually do not look loud. They reduce friction, expose hidden costs and make operations more predictable.
               </p>
               <p class="mt-6">
-                Some work becomes products. Some work becomes infrastructure. Some work stays private until it is useful enough to deserve a name.
+                BlackRiver AI builds those systems when a product, a workflow or a company needs them.
               </p>
+            </div>
+          </div>
+
+          <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="quiet rounded-3xl p-5">
+              <p class="text-sm font-semibold text-white">Cost intelligence</p>
+              <p class="mt-2 text-sm text-white/38">Measure what matters.</p>
+            </div>
+            <div class="quiet rounded-3xl p-5">
+              <p class="text-sm font-semibold text-white">Workflow automation</p>
+              <p class="mt-2 text-sm text-white/38">Remove repetitive work.</p>
+            </div>
+            <div class="quiet rounded-3xl p-5">
+              <p class="text-sm font-semibold text-white">Agent operations</p>
+              <p class="mt-2 text-sm text-white/38">Control machine workflows.</p>
+            </div>
+            <div class="quiet rounded-3xl p-5">
+              <p class="text-sm font-semibold text-white">Local AI</p>
+              <p class="mt-2 text-sm text-white/38">Own more of the stack.</p>
             </div>
           </div>
         </div>
@@ -439,36 +463,36 @@
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
           <div>
-            <p class="text-xs uppercase tracking-[.34em] text-white/36 font-semibold mb-6">Company</p>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Company</p>
             <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
               BlackRiver AI Ltd.
             </h2>
-            <p class="mt-6 text-lg text-white/52 leading-8 max-w-xl">
+            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">
               A UK company created to build, own and operate AI products and systems.
             </p>
           </div>
 
           <div class="glass rounded-[2rem] p-7 sm:p-9">
             <div class="divide-y divide-white/10">
-              <div class="flex items-center justify-between py-4">
-                <span class="text-white/40">Legal name</span>
+              <div class="flex items-center justify-between py-4 gap-6">
+                <span class="text-white/38">Legal name</span>
                 <span class="font-semibold text-right">BlackRiver AI Ltd</span>
               </div>
-              <div class="flex items-center justify-between py-4">
-                <span class="text-white/40">Company number</span>
+              <div class="flex items-center justify-between py-4 gap-6">
+                <span class="text-white/38">Company number</span>
                 <span class="font-semibold">17291854</span>
               </div>
-              <div class="flex items-center justify-between py-4">
-                <span class="text-white/40">Jurisdiction</span>
+              <div class="flex items-center justify-between py-4 gap-6">
+                <span class="text-white/38">Jurisdiction</span>
                 <span class="font-semibold text-right">England & Wales</span>
               </div>
-              <div class="flex items-center justify-between py-4">
-                <span class="text-white/40">Base</span>
+              <div class="flex items-center justify-between py-4 gap-6">
+                <span class="text-white/38">Base</span>
                 <span class="font-semibold text-right">London, United Kingdom</span>
               </div>
-              <div class="flex items-center justify-between py-4">
-                <span class="text-white/40">First public asset</span>
-                <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="font-semibold text-blackriver-blue hover:text-white transition">TokenOptimizer ↗</a>
+              <div class="flex items-center justify-between py-4 gap-6">
+                <span class="text-white/38">First public asset</span>
+                <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="font-semibold text-br-blue hover:text-white transition">TokenOptimizer ↗</a>
               </div>
             </div>
           </div>
@@ -478,25 +502,25 @@
 
     <section id="contact" class="py-24 sm:py-32 border-t border-white/10">
       <div class="mx-auto max-w-4xl px-5 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs uppercase tracking-[.34em] text-white/36 font-semibold mb-6">Contact</p>
+        <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Contact</p>
         <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
           Build with BlackRiver AI.
         </h2>
-        <p class="mt-6 text-lg text-white/52 leading-8 max-w-2xl mx-auto">
+        <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">
           Products, automation, infrastructure, audits, partnerships and private projects.
         </p>
 
         <form id="contactForm" class="mt-10 grid gap-3 text-left max-w-2xl mx-auto">
           <div class="grid sm:grid-cols-2 gap-3">
-            <input id="name" required placeholder="Name" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/30 outline-none focus:border-blackriver-blue focus:ring-2 focus:ring-blackriver-blue/20 transition" />
-            <input id="email" type="email" required placeholder="Email" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/30 outline-none focus:border-blackriver-blue focus:ring-2 focus:ring-blackriver-blue/20 transition" />
+            <input id="name" required placeholder="Name" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
+            <input id="email" type="email" required placeholder="Email" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
           </div>
-          <input id="subjectInput" placeholder="Subject" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/30 outline-none focus:border-blackriver-blue focus:ring-2 focus:ring-blackriver-blue/20 transition" />
-          <textarea id="message" rows="5" placeholder="Message" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/30 outline-none focus:border-blackriver-blue focus:ring-2 focus:ring-blackriver-blue/20 transition"></textarea>
-          <button type="submit" class="button-primary rounded-2xl px-6 py-4 text-sm font-bold transition">
+          <input id="subjectInput" placeholder="Subject" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
+          <textarea id="message" rows="5" placeholder="Message" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition"></textarea>
+          <button type="submit" class="button button-light rounded-2xl px-6 py-4 text-sm font-bold">
             Send inquiry
           </button>
-          <p class="text-center text-xs text-white/30">
+          <p class="text-center text-xs text-white/28">
             Demo form opens your email client. Connect a backend before production.
           </p>
         </form>
@@ -510,26 +534,27 @@
         <div>
           <div class="flex items-center gap-3">
             <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-              <rect x="6" y="6" width="52" height="52" rx="16" stroke="rgba(255,255,255,.18)" />
-              <path d="M18 39C27 25 37 42 46 20" stroke="#F5F7FA" stroke-width="4.4" stroke-linecap="round" />
+              <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)" />
+              <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F6F7F9" stroke-width="4.6" stroke-linecap="round"/>
             </svg>
             <span class="font-semibold">BlackRiver AI</span>
           </div>
-          <p class="mt-4 text-sm text-white/34 max-w-md">
-            Products, systems and infrastructure for applied intelligence.
+          <p class="mt-4 text-sm text-white/32 max-w-md">
+            Products, systems and infrastructure.
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/42">
-          <a href="#work" class="hover:text-white transition">Work</a>
+        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/40">
+          <a href="#house" class="hover:text-white transition">House</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
+          <a href="#systems" class="hover:text-white transition">Systems</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
           <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hover:text-white transition">TokenOptimizer</a>
         </div>
       </div>
 
-      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/28">
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/26">
         <p>© 2026 BlackRiver AI Ltd. All rights reserved.</p>
         <p>Company Number: 17291854 · London, United Kingdom</p>
       </div>
@@ -544,11 +569,8 @@
     const closeIcon = document.getElementById('closeIcon');
 
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 18) {
-        nav.classList.add('bg-black/20', 'backdrop-blur-xl');
-      } else {
-        nav.classList.remove('bg-black/20', 'backdrop-blur-xl');
-      }
+      if (window.scrollY > 18) nav.classList.add('bg-black/20', 'backdrop-blur-xl');
+      else nav.classList.remove('bg-black/20', 'backdrop-blur-xl');
     });
 
     menuButton.addEventListener('click', () => {
@@ -567,15 +589,12 @@
 
     document.getElementById('contactForm').addEventListener('submit', event => {
       event.preventDefault();
-
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const subjectValue = document.getElementById('subjectInput').value.trim() || 'BlackRiver AI inquiry';
       const message = document.getElementById('message').value.trim();
-
       const subject = encodeURIComponent(subjectValue);
       const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-
       window.location.href = `mailto:contact@blackriver.ai?subject=${subject}&body=${body}`;
     });
   </script>
@@ -588,7 +607,7 @@
     "legalName": "BlackRiver AI Ltd",
     "identifier": "17291854",
     "url": "https://blackriver.ai/",
-    "description": "BlackRiver AI builds and operates AI products, automation systems and infrastructure.",
+    "description": "BlackRiver AI builds and owns AI products, infrastructure and automation systems.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "London",
