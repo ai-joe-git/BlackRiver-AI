@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>BlackRiver AI</title>
-  <meta name="description" content="BlackRiver AI builds and owns AI products, infrastructure and automation systems." />
-  <meta name="theme-color" content="#030406" />
+  <title>BlackRiver AI | Applied Intelligence Infrastructure</title>
+  <meta name="description" content="BlackRiver AI builds and owns applied intelligence infrastructure, software products and automation systems." />
+  <meta name="theme-color" content="#020306" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="BlackRiver AI" />
-  <meta property="og:description" content="AI products, infrastructure and automation systems." />
-  <meta property="og:url" content="https://blackriver.ai/" />
+  <meta property="og:description" content="Applied intelligence infrastructure, software products and automation systems." />
+  <meta property="og:url" content="https://blackriver-ai.vercel.app/" />
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -26,22 +26,26 @@
           fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'] },
           colors: {
             br: {
-              black: '#030406',
-              ink: '#07090D',
-              graphite: '#0D1117',
-              panel: '#111722',
-              line: 'rgba(255,255,255,.10)',
-              text: '#F6F7F9',
-              muted: '#9AA3B2',
+              black: '#020306',
+              ink: '#06080D',
+              graphite: '#0B0F16',
+              panel: '#101722',
+              text: '#F7F9FC',
+              muted: '#98A2B3',
               dim: '#5F6877',
               blue: '#8DB4FF',
+              cyan: '#8DF1FF',
+              mint: '#58E6B1',
               silver: '#DDE3EC',
-              frost: '#F7FAFF'
+              frost: '#F7FAFF',
+              violet: '#B8A2FF',
+              amber: '#FFD166'
             }
           },
           boxShadow: {
-            deep: '0 48px 160px rgba(0,0,0,.58)',
-            soft: '0 22px 80px rgba(0,0,0,.32)'
+            deep: '0 54px 180px rgba(0,0,0,.62)',
+            soft: '0 28px 90px rgba(0,0,0,.36)',
+            glow: '0 0 100px rgba(141,180,255,.18)'
           }
         }
       }
@@ -49,154 +53,81 @@
   </script>
 
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #030406;
-      --line: rgba(255,255,255,.10);
-    }
-
+    :root { color-scheme: dark; --bg: #020306; --line: rgba(255,255,255,.10); }
     * { box-sizing: border-box; }
-
     html, body {
       min-height: 100%;
       background: var(--bg);
-      color: #F6F7F9;
+      color: #F7F9FC;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
       overflow-x: hidden;
     }
-
-    ::selection {
-      color: #fff;
-      background: rgba(141,180,255,.35);
-    }
+    ::selection { color:#fff; background: rgba(141,180,255,.34); }
 
     .field {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
-        radial-gradient(circle at 50% -18%, rgba(141,180,255,.16), transparent 34%),
-        radial-gradient(circle at 86% 18%, rgba(255,255,255,.06), transparent 28%),
-        linear-gradient(180deg, #030406 0%, #06080D 52%, #030406 100%);
+        radial-gradient(circle at 50% -18%, rgba(141,180,255,.17), transparent 34%),
+        radial-gradient(circle at 85% 22%, rgba(88,230,177,.08), transparent 26%),
+        radial-gradient(circle at 12% 78%, rgba(184,162,255,.08), transparent 34%),
+        linear-gradient(180deg, #020306 0%, #050812 50%, #020306 100%);
     }
-
     .field::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: .26;
+      content:""; position:absolute; inset:0; opacity:.27;
       background-image:
         linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px);
-      background-size: 88px 88px;
-      mask-image: radial-gradient(circle at 50% 8%, black 0%, transparent 70%);
+      background-size: 96px 96px;
+      mask-image: radial-gradient(circle at 50% 6%, black 0%, transparent 70%);
     }
-
     .grain::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      pointer-events: none;
-      opacity: .028;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+      content:""; position: fixed; inset:0; z-index:100; pointer-events:none; opacity:.026;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
     }
-
     .glass {
-      background: rgba(255,255,255,.045);
+      background: rgba(255,255,255,.044);
       border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 30px 100px rgba(0,0,0,.30);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 32px 110px rgba(0,0,0,.32);
     }
-
     .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.032));
+      background: linear-gradient(180deg, rgba(255,255,255,.072), rgba(255,255,255,.030));
       border: 1px solid rgba(255,255,255,.10);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
     }
-
     .quiet {
-      background: rgba(255,255,255,.028);
-      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.026);
+      border: 1px solid rgba(255,255,255,.080);
     }
-
-    .hero {
-      letter-spacing: -.082em;
-      line-height: .86;
-    }
-
+    .hero { letter-spacing: -.084em; line-height: .84; }
     .sheen {
-      background: linear-gradient(180deg, #fff 0%, #F0F3F7 42%, #A1A9B8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      background: linear-gradient(180deg, #fff 0%, #F0F4FA 42%, #9FA9B8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    .fade {
-      opacity: 0;
-      transform: translateY(18px);
-      animation: fade .9s cubic-bezier(.2,.75,.22,1) forwards;
+    .blue-sheen {
+      background: linear-gradient(120deg, #F7F9FC 0%, #8DB4FF 52%, #8DF1FF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .d1 { animation-delay: .08s; }
-    .d2 { animation-delay: .16s; }
-    .d3 { animation-delay: .24s; }
-
-    @keyframes fade { to { opacity: 1; transform: translateY(0); } }
-
-    .mark-path {
-      stroke-dasharray: 180;
-      stroke-dashoffset: 180;
-      animation: draw 1.4s cubic-bezier(.2,.7,.2,1) forwards .2s;
-    }
-
-    @keyframes draw { to { stroke-dashoffset: 0; } }
-
-    .slow {
-      animation: slow 16s ease-in-out infinite;
-    }
-    @keyframes slow {
-      0%,100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(.5deg); }
-    }
-
-    .hover-card {
-      transition: transform .28s ease, border-color .28s ease, background .28s ease;
-    }
-    .hover-card:hover {
-      transform: translateY(-5px);
-      background: rgba(255,255,255,.052);
-      border-color: rgba(255,255,255,.16);
-    }
-
-    .button {
-      transition: transform .22s ease, background .22s ease, border-color .22s ease;
-    }
+    .fade { opacity: 0; transform: translateY(18px); animation: fade .9s cubic-bezier(.2,.75,.22,1) forwards; }
+    .d1 { animation-delay:.08s; } .d2 { animation-delay:.16s; } .d3 { animation-delay:.24s; }
+    @keyframes fade { to { opacity:1; transform:translateY(0); } }
+    .slow { animation: slow 18s ease-in-out infinite; }
+    @keyframes slow { 0%,100%{ transform:translateY(0) rotate(0deg);} 50%{ transform:translateY(-12px) rotate(.45deg);} }
+    .button { transition: transform .22s ease, background .22s ease, border-color .22s ease; }
     .button:hover { transform: translateY(-1px); }
-
-    .button-light {
-      background: #F6F7F9;
-      color: #030406;
-    }
-    .button-light:hover { background: #DDE3EC; }
-
-    .river-line {
-      position: absolute;
-      inset-inline: 0;
-      height: 1px;
-      opacity: .55;
-      background: linear-gradient(90deg, transparent, rgba(141,180,255,.8), rgba(255,255,255,.55), transparent);
-    }
+    .button-light { background:#F7F9FC; color:#020306; }
+    .button-light:hover { background:#DDE3EC; }
+    .hover-card { transition: transform .28s ease, border-color .28s ease, background .28s ease; }
+    .hover-card:hover { transform: translateY(-5px); background: rgba(255,255,255,.052); border-color: rgba(255,255,255,.16); }
+    .line-glow { height:1px; background:linear-gradient(90deg, transparent, rgba(141,180,255,.70), rgba(255,255,255,.46), transparent); }
+    .node { position:absolute; width:10px; height:10px; border-radius:999px; background:#8DB4FF; box-shadow:0 0 30px rgba(141,180,255,.65); }
+    .route-line { position:absolute; height:1px; transform-origin:left center; background:linear-gradient(90deg, rgba(141,180,255,0), rgba(141,180,255,.8), rgba(141,241,255,0)); opacity:.70; }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
-        scroll-behavior: auto !important;
-      }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
     }
   </style>
 </head>
@@ -210,23 +141,24 @@
         <a href="#" class="flex items-center gap-3" aria-label="BlackRiver AI">
           <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
             <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)" />
-            <path class="mark-path" d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F6F7F9" stroke-width="4.6" stroke-linecap="round"/>
-            <path class="mark-path" d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/>
+            <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/>
+            <path d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/>
           </svg>
           <span class="text-sm font-semibold tracking-tight">BlackRiver AI</span>
         </a>
 
         <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/52">
-          <a href="#house" class="hover:text-white transition">House</a>
+          <a href="#thesis" class="hover:text-white transition">Thesis</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
-          <a href="#systems" class="hover:text-white transition">Systems</a>
+          <a href="#operating-layer" class="hover:text-white transition">Infrastructure</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
         </div>
 
-        <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hidden sm:inline-flex rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/68 hover:bg-white/8 hover:text-white transition">
-          TokenOptimizer
-        </a>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/62 hover:bg-white/8 hover:text-white transition">TokenOptimizer</a>
+          <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/62 hover:bg-white/8 hover:text-white transition">Gateway</a>
+        </div>
 
         <button id="menuButton" class="md:hidden h-9 w-9 rounded-full border border-white/10 flex items-center justify-center text-white/75" aria-label="Open menu">
           <svg id="openIcon" class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -235,12 +167,13 @@
       </div>
 
       <div id="mobileMenu" class="hidden md:hidden mt-3 rounded-3xl border border-white/10 bg-black/82 p-3 backdrop-blur-2xl">
-        <a href="#house" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">House</a>
+        <a href="#thesis" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Thesis</a>
         <a href="#portfolio" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Portfolio</a>
-        <a href="#systems" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Systems</a>
+        <a href="#operating-layer" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Infrastructure</a>
         <a href="#company" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Company</a>
         <a href="#contact" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Contact</a>
         <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">TokenOptimizer</a>
+        <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">BlackRiver Gateway</a>
       </div>
     </nav>
   </header>
@@ -248,28 +181,24 @@
   <main class="relative z-10">
     <section class="min-h-screen flex items-center pt-28 pb-20">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 w-full">
-        <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-16 lg:gap-24 items-center">
+        <div class="grid lg:grid-cols-[1.02fr_.98fr] gap-16 lg:gap-24 items-center">
           <div class="fade">
             <p class="mb-8 text-xs uppercase tracking-[.34em] text-white/34 font-semibold">
-              Applied intelligence company
+              Applied intelligence infrastructure
             </p>
 
-            <h1 class="hero text-[4.15rem] sm:text-[6.2rem] lg:text-[8.3rem] font-black">
+            <h1 class="hero text-[4.05rem] sm:text-[6.1rem] lg:text-[7.45rem] xl:text-[8.05rem] font-black">
               <span class="sheen">BlackRiver</span><br />
               <span class="text-white">AI</span>
             </h1>
 
             <p class="mt-8 max-w-2xl text-xl sm:text-2xl leading-9 text-white/56 font-light">
-              A quiet house for AI products, automation systems and infrastructure.
+              A quiet house for software products, AI infrastructure and automation systems.
             </p>
 
             <div class="mt-10 flex flex-col sm:flex-row gap-3">
-              <a href="#portfolio" class="button button-light inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold">
-                View portfolio
-              </a>
-              <a href="#contact" class="button inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white">
-                Contact
-              </a>
+              <a href="#portfolio" class="button button-light inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold">View portfolio</a>
+              <a href="#operating-layer" class="button inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white">Explore infrastructure</a>
             </div>
           </div>
 
@@ -279,94 +208,93 @@
             <div class="relative slow">
               <div class="panel rounded-[2.4rem] p-6 sm:p-8 shadow-deep">
                 <div class="relative aspect-square rounded-[1.95rem] border border-white/10 bg-black/22 overflow-hidden">
-                  <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 30%, rgba(141,180,255,.14), transparent 42%), radial-gradient(circle at 50% 78%, rgba(255,255,255,.055), transparent 36%);"></div>
-                  <div class="river-line top-[32%]"></div>
-                  <div class="river-line top-[62%] opacity-30"></div>
+                  <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 30%, rgba(141,180,255,.14), transparent 42%), radial-gradient(circle at 50% 78%, rgba(88,230,177,.06), transparent 36%);"></div>
+                  <div class="absolute inset-x-0 top-[34%] line-glow"></div>
+                  <div class="absolute inset-x-0 top-[63%] line-glow opacity-30"></div>
 
                   <div class="absolute inset-0 flex items-center justify-center">
-                    <svg class="w-[72%] h-[72%]" viewBox="0 0 420 420" fill="none" aria-hidden="true">
-                      <circle cx="210" cy="210" r="158" stroke="rgba(255,255,255,.07)" />
-                      <circle cx="210" cy="210" r="104" stroke="rgba(255,255,255,.09)" />
-                      <path d="M78 263C130 176 185 286 247 178C274 132 304 109 342 92" stroke="url(#riverA)" stroke-width="13.5" stroke-linecap="round"/>
-                      <path d="M78 198C131 110 187 219 248 111C275 65 305 43 342 28" stroke="url(#riverB)" stroke-width="8.5" stroke-linecap="round" opacity=".75"/>
-                      <path d="M104 324C164 248 216 344 309 230" stroke="rgba(255,255,255,.20)" stroke-width="3" stroke-linecap="round" opacity=".55"/>
-                      <defs>
-                        <linearGradient id="riverA" x1="78" x2="342" y1="263" y2="92">
-                          <stop stop-color="#F6F7F9"/>
-                          <stop offset=".55" stop-color="#8DB4FF"/>
-                          <stop offset="1" stop-color="#DDE3EC"/>
-                        </linearGradient>
-                        <linearGradient id="riverB" x1="78" x2="342" y1="198" y2="28">
-                          <stop stop-color="#5F6877"/>
-                          <stop offset=".55" stop-color="#8DB4FF"/>
-                          <stop offset="1" stop-color="#F6F7F9"/>
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                    <div class="relative h-[72%] w-[72%]">
+                      <div class="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-[2rem] border border-white/14 bg-white/[.055] backdrop-blur-xl flex items-center justify-center shadow-glow">
+                        <svg class="h-11 w-11" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                          <path d="M12 40C23 22 36 44 52 16" stroke="#F7F9FC" stroke-width="5.5" stroke-linecap="round"/>
+                          <path d="M12 28C23 10 36 32 52 4" stroke="#8DB4FF" stroke-width="3.8" stroke-linecap="round" opacity=".8"/>
+                        </svg>
+                      </div>
+
+                      <div class="node left-[8%] top-[12%]"></div>
+                      <div class="node right-[8%] top-[20%]" style="background:#58E6B1"></div>
+                      <div class="node left-[12%] bottom-[18%]" style="background:#B8A2FF"></div>
+                      <div class="node right-[12%] bottom-[13%]" style="background:#FFD166"></div>
+                      <div class="node left-[50%] top-[2%]" style="background:#F7F9FC"></div>
+                      <div class="node left-[50%] bottom-[4%]" style="background:#8DF1FF"></div>
+
+                      <div class="route-line left-[12%] top-[15%] w-[44%] rotate-[33deg]"></div>
+                      <div class="route-line right-[14%] top-[22%] w-[40%] rotate-[-27deg]"></div>
+                      <div class="route-line left-[14%] bottom-[21%] w-[42%] rotate-[-28deg]"></div>
+                      <div class="route-line right-[14%] bottom-[16%] w-[42%] rotate-[28deg]"></div>
+                      <div class="route-line left-[50%] top-[5%] w-[40%] rotate-90 origin-left"></div>
+                      <div class="route-line left-[50%] bottom-[7%] w-[38%] -rotate-90 origin-left"></div>
+                    </div>
                   </div>
 
-                  <div class="absolute bottom-5 left-5 right-5 flex justify-between text-[10px] uppercase tracking-[.24em] text-white/24">
-                    <span>Products</span>
-                    <span>Systems</span>
-                    <span>Capital</span>
+                  <div class="absolute bottom-5 left-5 right-5">
+                    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/16 to-transparent"></div>
                   </div>
                 </div>
               </div>
 
-              <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="absolute -bottom-6 -left-5 hidden sm:block glass rounded-[1.7rem] p-5 w-60 hover:bg-white/[.07] transition">
-                <p class="text-[10px] uppercase tracking-[.24em] text-white/34 font-semibold">Portfolio asset</p>
-                <p class="mt-2 text-xl font-bold">TokenOptimizer</p>
-                <p class="mt-2 text-sm text-white/38">AI cost intelligence.</p>
-              </a>
+              <div class="absolute -bottom-7 left-1/2 hidden w-[34rem] -translate-x-1/2 grid-cols-2 gap-4 sm:grid">
+                <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="glass rounded-[1.55rem] p-5 hover:bg-white/[.07] transition overflow-hidden">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-[10px] uppercase tracking-[.22em] text-white/34 font-semibold whitespace-nowrap">Live product</p>
+                    <span class="h-2 w-2 rounded-full bg-br-blue shadow-glow"></span>
+                  </div>
+                  <p class="mt-3 text-xl font-bold tracking-tight">TokenOptimizer</p>
+                  <p class="mt-2 text-sm text-white/42">AI cost intelligence.</p>
+                </a>
+
+                <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="glass rounded-[1.55rem] p-5 hover:bg-white/[.07] transition overflow-hidden">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-[10px] uppercase tracking-[.22em] text-white/34 font-semibold whitespace-nowrap">Infrastructure</p>
+                    <span class="h-2 w-2 rounded-full bg-br-mint shadow-glow"></span>
+                  </div>
+                  <p class="mt-3 text-xl font-bold tracking-tight">Gateway</p>
+                  <p class="mt-2 text-sm text-white/42">AI routing layer.</p>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="house" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+    <section id="thesis" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-[.78fr_1.22fr] gap-14 lg:gap-20">
           <div>
-            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">House</p>
-            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-              Built to own more than one idea.
-            </h2>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Thesis</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">The brand stays broad. The products stay focused.</h2>
           </div>
-
           <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
-            <p>
-              BlackRiver AI is the company behind a portfolio of software assets, enterprise systems and applied AI experiments.
-            </p>
-            <p class="mt-6">
-              The brand stays broad. The products stay focused.
-            </p>
+            <p>BlackRiver AI is built to own more than one product. Some work becomes software. Some work becomes infrastructure. Some work stays private until it is useful enough to deserve a name.</p>
+            <p class="mt-6">The company is the house. The products are the surfaces.</p>
           </div>
         </div>
-
         <div class="mt-16 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
           <article class="bg-br-black p-7 sm:p-9">
             <p class="text-sm text-white/32 mb-10">01</p>
             <h3 class="text-2xl font-bold">Products</h3>
-            <p class="mt-4 text-white/48 leading-7">
-              Independent software assets with clear markets, pricing and distribution.
-            </p>
+            <p class="mt-4 text-white/48 leading-7">Independent commercial assets with their own market, pricing and identity.</p>
           </article>
-
           <article class="bg-br-black p-7 sm:p-9">
             <p class="text-sm text-white/32 mb-10">02</p>
-            <h3 class="text-2xl font-bold">Systems</h3>
-            <p class="mt-4 text-white/48 leading-7">
-              Automation, infrastructure and AI operations work for companies.
-            </p>
+            <h3 class="text-2xl font-bold">Infrastructure</h3>
+            <p class="mt-4 text-white/48 leading-7">Core systems that make AI usage easier to route, measure, govern and optimize.</p>
           </article>
-
           <article class="bg-br-black p-7 sm:p-9">
             <p class="text-sm text-white/32 mb-10">03</p>
             <h3 class="text-2xl font-bold">Labs</h3>
-            <p class="mt-4 text-white/48 leading-7">
-              Private exploration around agents, voice, local models and new workflows.
-            </p>
+            <p class="mt-4 text-white/48 leading-7">Private exploration around agents, voice, local models and machine workflows.</p>
           </article>
         </div>
       </div>
@@ -377,20 +305,27 @@
         <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
           <div>
             <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Portfolio</p>
-            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-              Products with their own surface area.
-            </h2>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Products with their own surface area.</h2>
           </div>
 
           <div class="grid gap-4">
             <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hover-card panel rounded-[2rem] p-7 sm:p-8 block">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
                 <div>
-                  <p class="text-xs uppercase tracking-[.24em] text-br-blue font-semibold">Live</p>
+                  <p class="text-xs uppercase tracking-[.24em] text-br-blue font-semibold">Live product</p>
                   <h3 class="mt-4 text-3xl sm:text-4xl font-black tracking-[-.045em]">TokenOptimizer</h3>
-                  <p class="mt-4 max-w-2xl text-white/50 leading-7">
-                    AI cost intelligence and optimization for companies using LLMs at scale.
-                  </p>
+                  <p class="mt-4 max-w-2xl text-white/50 leading-7">AI cost intelligence and optimization for companies using LLMs at scale.</p>
+                </div>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52">Open →</span>
+              </div>
+            </a>
+
+            <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="hover-card panel rounded-[2rem] p-7 sm:p-8 block">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div>
+                  <p class="text-xs uppercase tracking-[.24em] text-br-mint font-semibold">Infrastructure product</p>
+                  <h3 class="mt-4 text-3xl sm:text-4xl font-black tracking-[-.045em]">BlackRiver Gateway</h3>
+                  <p class="mt-4 max-w-2xl text-white/50 leading-7">AI routing infrastructure: one endpoint for providers, coding agents and enterprise AI tools.</p>
                 </div>
                 <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52">Open →</span>
               </div>
@@ -399,61 +334,38 @@
             <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
               <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Private</p>
               <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Automation systems</h3>
-              <p class="mt-4 text-white/46 leading-7">
-                Software systems that turn repetitive internal work into controlled processes.
-              </p>
+              <p class="mt-4 text-white/46 leading-7">Software systems that turn repetitive internal work into controlled processes.</p>
             </div>
 
             <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
               <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Research</p>
               <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Agents, voice and local AI</h3>
-              <p class="mt-4 text-white/46 leading-7">
-                Practical experiments around agent workflows, voice interfaces and local model infrastructure.
-              </p>
+              <p class="mt-4 text-white/46 leading-7">Practical experiments around agent workflows, voice interfaces and local model infrastructure.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="systems" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+    <section id="operating-layer" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div class="panel rounded-[2.5rem] p-8 sm:p-12 lg:p-16">
-          <div class="grid lg:grid-cols-[.85fr_1.15fr] gap-12 items-start">
+          <div class="grid lg:grid-cols-[.86fr_1.14fr] gap-12 items-start">
             <div>
-              <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Position</p>
-              <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-                Quiet infrastructure.
-              </h2>
+              <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Operating layer</p>
+              <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Quiet infrastructure.</h2>
             </div>
-
             <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
-              <p>
-                The most valuable systems usually do not look loud. They reduce friction, expose hidden costs and make operations more predictable.
-              </p>
-              <p class="mt-6">
-                BlackRiver AI builds those systems when a product, a workflow or a company needs them.
-              </p>
+              <p>The most valuable AI systems usually do not look loud. They route traffic, expose hidden costs, reduce waste and make operations more predictable.</p>
+              <p class="mt-6">BlackRiver Gateway powers the routing layer. TokenOptimizer turns usage into cost intelligence.</p>
             </div>
           </div>
 
           <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div class="quiet rounded-3xl p-5">
-              <p class="text-sm font-semibold text-white">Cost intelligence</p>
-              <p class="mt-2 text-sm text-white/38">Measure what matters.</p>
-            </div>
-            <div class="quiet rounded-3xl p-5">
-              <p class="text-sm font-semibold text-white">Workflow automation</p>
-              <p class="mt-2 text-sm text-white/38">Remove repetitive work.</p>
-            </div>
-            <div class="quiet rounded-3xl p-5">
-              <p class="text-sm font-semibold text-white">Agent operations</p>
-              <p class="mt-2 text-sm text-white/38">Control machine workflows.</p>
-            </div>
-            <div class="quiet rounded-3xl p-5">
-              <p class="text-sm font-semibold text-white">Local AI</p>
-              <p class="mt-2 text-sm text-white/38">Own more of the stack.</p>
-            </div>
+            <div class="quiet rounded-3xl p-5"><p class="text-sm font-semibold text-white">Routing</p><p class="mt-2 text-sm text-white/38">One endpoint, many providers.</p></div>
+            <div class="quiet rounded-3xl p-5"><p class="text-sm font-semibold text-white">Cost intelligence</p><p class="mt-2 text-sm text-white/38">Measure what matters.</p></div>
+            <div class="quiet rounded-3xl p-5"><p class="text-sm font-semibold text-white">Agent operations</p><p class="mt-2 text-sm text-white/38">Control machine workflows.</p></div>
+            <div class="quiet rounded-3xl p-5"><p class="text-sm font-semibold text-white">Local AI</p><p class="mt-2 text-sm text-white/38">Own more of the stack.</p></div>
           </div>
         </div>
       </div>
@@ -464,36 +376,17 @@
         <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
           <div>
             <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Company</p>
-            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-              BlackRiver AI Ltd.
-            </h2>
-            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">
-              A UK company created to build, own and operate AI products and systems.
-            </p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">BlackRiver AI Ltd.</h2>
+            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">A UK company created to build, own and operate AI products and infrastructure.</p>
           </div>
 
           <div class="glass rounded-[2rem] p-7 sm:p-9">
             <div class="divide-y divide-white/10">
-              <div class="flex items-center justify-between py-4 gap-6">
-                <span class="text-white/38">Legal name</span>
-                <span class="font-semibold text-right">BlackRiver AI Ltd</span>
-              </div>
-              <div class="flex items-center justify-between py-4 gap-6">
-                <span class="text-white/38">Company number</span>
-                <span class="font-semibold">17291854</span>
-              </div>
-              <div class="flex items-center justify-between py-4 gap-6">
-                <span class="text-white/38">Jurisdiction</span>
-                <span class="font-semibold text-right">England & Wales</span>
-              </div>
-              <div class="flex items-center justify-between py-4 gap-6">
-                <span class="text-white/38">Base</span>
-                <span class="font-semibold text-right">London, United Kingdom</span>
-              </div>
-              <div class="flex items-center justify-between py-4 gap-6">
-                <span class="text-white/38">First public asset</span>
-                <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="font-semibold text-br-blue hover:text-white transition">TokenOptimizer ↗</a>
-              </div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Legal name</span><span class="font-semibold text-right">BlackRiver AI Ltd</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Company number</span><span class="font-semibold">17291854</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Jurisdiction</span><span class="font-semibold text-right">England & Wales</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Base</span><span class="font-semibold text-right">London, United Kingdom</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Public assets</span><span class="font-semibold text-right"><a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="text-br-blue hover:text-white transition">TokenOptimizer</a> · <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="text-br-blue hover:text-white transition">Gateway</a></span></div>
             </div>
           </div>
         </div>
@@ -503,12 +396,8 @@
     <section id="contact" class="py-24 sm:py-32 border-t border-white/10">
       <div class="mx-auto max-w-4xl px-5 sm:px-6 lg:px-8 text-center">
         <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Contact</p>
-        <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">
-          Build with BlackRiver AI.
-        </h2>
-        <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">
-          Products, automation, infrastructure, audits, partnerships and private projects.
-        </p>
+        <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Build with BlackRiver AI.</h2>
+        <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">Products, automation, infrastructure, audits, partnerships and private projects.</p>
 
         <form id="contactForm" class="mt-10 grid gap-3 text-left max-w-2xl mx-auto">
           <div class="grid sm:grid-cols-2 gap-3">
@@ -517,12 +406,8 @@
           </div>
           <input id="subjectInput" placeholder="Subject" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
           <textarea id="message" rows="5" placeholder="Message" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition"></textarea>
-          <button type="submit" class="button button-light rounded-2xl px-6 py-4 text-sm font-bold">
-            Send inquiry
-          </button>
-          <p class="text-center text-xs text-white/28">
-            Demo form opens your email client. Connect a backend before production.
-          </p>
+          <button type="submit" class="button button-light rounded-2xl px-6 py-4 text-sm font-bold">Send inquiry</button>
+          <p class="text-center text-xs text-white/28">Demo form opens your email client. Connect a backend before production.</p>
         </form>
       </div>
     </section>
@@ -535,22 +420,21 @@
           <div class="flex items-center gap-3">
             <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
               <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)" />
-              <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F6F7F9" stroke-width="4.6" stroke-linecap="round"/>
+              <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/>
             </svg>
             <span class="font-semibold">BlackRiver AI</span>
           </div>
-          <p class="mt-4 text-sm text-white/32 max-w-md">
-            Products, systems and infrastructure.
-          </p>
+          <p class="mt-4 text-sm text-white/32 max-w-md">Applied intelligence infrastructure, software products and automation systems.</p>
         </div>
 
         <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/40">
-          <a href="#house" class="hover:text-white transition">House</a>
+          <a href="#thesis" class="hover:text-white transition">Thesis</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
-          <a href="#systems" class="hover:text-white transition">Systems</a>
+          <a href="#operating-layer" class="hover:text-white transition">Infrastructure</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
           <a href="https://tokenoptimizer-ai.vercel.app/" target="_blank" rel="noopener" class="hover:text-white transition">TokenOptimizer</a>
+          <a href="https://blackriver-gateway.vercel.app/" target="_blank" rel="noopener" class="hover:text-white transition">Gateway</a>
         </div>
       </div>
 
@@ -606,8 +490,8 @@
     "name": "BlackRiver AI Ltd",
     "legalName": "BlackRiver AI Ltd",
     "identifier": "17291854",
-    "url": "https://blackriver.ai/",
-    "description": "BlackRiver AI builds and owns AI products, infrastructure and automation systems.",
+    "url": "https://blackriver-ai.vercel.app/",
+    "description": "BlackRiver AI builds and owns applied intelligence infrastructure, software products and automation systems.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "London",
@@ -618,6 +502,11 @@
         "@type": "Brand",
         "name": "TokenOptimizer",
         "url": "https://tokenoptimizer-ai.vercel.app/"
+      },
+      {
+        "@type": "Brand",
+        "name": "BlackRiver Gateway",
+        "url": "https://blackriver-gateway.vercel.app/"
       }
     ]
   }
