@@ -3,103 +3,295 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlackRiver Gateway | AI Routing Infrastructure</title>
-  <meta name="description" content="BlackRiver Gateway is an AI routing layer for teams using multiple LLM providers, coding agents, copilots and enterprise AI tools." />
-  <meta name="theme-color" content="#04060A" />
+  <title>BlackRiver Gateway by BlackRiver AI | AI Routing Infrastructure</title>
+  <meta name="description" content="BlackRiver Gateway is an AI routing layer for teams using multiple LLM providers, coding agents, copilots and enterprise AI tools. One endpoint, auto-fallback, quota-aware, local or remote." />
+  <meta name="theme-color" content="#020306" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="BlackRiver Gateway by BlackRiver AI" />
+  <meta property="og:description" content="AI routing infrastructure. One endpoint for providers, coding agents and enterprise AI tools." />
+  <meta property="og:url" content="https://blackriver-ai.vercel.app/blackriver-gateway.html" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='7' y='7' width='50' height='50' rx='15' fill='none' stroke='%238DB4FF' stroke-width='3'/%3E%3Cpath d='M16 39.5C25 25 35.5 43 47 19.5' stroke='%23F7F9FC' stroke-width='4.6' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 28.5C25 14 36 32 47 8.5' stroke='%238DB4FF' stroke-width='3.1' stroke-linecap='round' fill='none' opacity='.8'/%3E%3C/svg%3E" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'] },
+          fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'], mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'] },
           colors: {
-            br: { black:'#04060A', ink:'#070B12', panel:'#0D1320', blue:'#7BA7FF', cyan:'#8DF1FF', mint:'#59F0B7', violet:'#B59CFF', amber:'#FFD166' }
+            br: {
+              black: '#020306',
+              ink: '#06080D',
+              graphite: '#0B0F16',
+              panel: '#101722',
+              text: '#F7F9FC',
+              muted: '#98A2B3',
+              dim: '#5F6877',
+              blue: '#8DB4FF',
+              cyan: '#8DF1FF',
+              mint: '#58E6B1',
+              silver: '#DDE3EC',
+              frost: '#F7FAFF',
+              violet: '#B8A2FF',
+              amber: '#FFD166'
+            }
           },
-          boxShadow: { deep:'0 48px 160px rgba(0,0,0,.58)', soft:'0 26px 90px rgba(0,0,0,.34)', blue:'0 0 90px rgba(123,167,255,.18)' }
+          boxShadow: {
+            deep: '0 54px 180px rgba(0,0,0,.62)',
+            soft: '0 28px 90px rgba(0,0,0,.36)',
+            glow: '0 0 100px rgba(141,180,255,.18)',
+            mint: '0 24px 80px rgba(88,230,177,.16)',
+            violet: '0 24px 80px rgba(184,162,255,.14)'
+          }
         }
       }
     }
   </script>
+
   <style>
-    :root { color-scheme: dark; --bg:#04060A; }
-    * { box-sizing:border-box; }
-    html, body { min-height:100%; background:var(--bg); color:#F7F9FC; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; overflow-x:hidden; }
-    ::selection { background:rgba(123,167,255,.35); color:#fff; }
-    .field { position:fixed; inset:0; z-index:0; pointer-events:none; background:radial-gradient(circle at 45% -16%, rgba(123,167,255,.18), transparent 34%), radial-gradient(circle at 86% 18%, rgba(89,240,183,.10), transparent 30%), radial-gradient(circle at 22% 78%, rgba(181,156,255,.08), transparent 34%), linear-gradient(180deg,#04060A 0%,#07101C 50%,#04060A 100%); }
-    .field:after { content:""; position:absolute; inset:0; opacity:.28; background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:86px 86px; mask-image:radial-gradient(circle at 50% 10%,black 0%,transparent 72%); }
-    .grain:after { content:""; position:fixed; inset:0; pointer-events:none; z-index:100; opacity:.03; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");}
-    .glass { background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 100px rgba(0,0,0,.30); }
-    .panel { background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.032)); border:1px solid rgba(255,255,255,.10); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); }
-    .quiet { background:rgba(255,255,255,.030); border:1px solid rgba(255,255,255,.08); }
-    .hero { letter-spacing:-.078em; line-height:.86; }
-    .sheen { background:linear-gradient(180deg,#fff 0%,#F1F5FA 42%,#AAB5C5 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .fade { opacity:0; transform:translateY(18px); animation:fade .9s cubic-bezier(.2,.75,.22,1) forwards; }
-    .d1 { animation-delay:.08s; } .d2 { animation-delay:.16s; }
+    :root { color-scheme: dark; --bg: #020306; --line: rgba(255,255,255,.10); }
+    * { box-sizing: border-box; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: #F7F9FC;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+      overflow-x: hidden;
+    }
+    ::selection { color:#fff; background: rgba(141,180,255,.34); }
+
+    .field {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(circle at 50% -18%, rgba(141,180,255,.17), transparent 34%),
+        radial-gradient(circle at 85% 22%, rgba(88,230,177,.08), transparent 26%),
+        radial-gradient(circle at 12% 78%, rgba(184,162,255,.08), transparent 34%),
+        linear-gradient(180deg, #020306 0%, #050812 50%, #020306 100%);
+    }
+    .field::after {
+      content:""; position:absolute; inset:0; opacity:.27;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px);
+      background-size: 96px 96px;
+      mask-image: radial-gradient(circle at 50% 6%, black 0%, transparent 70%);
+    }
+    .grain::after {
+      content:""; position: fixed; inset:0; z-index:100; pointer-events:none; opacity:.026;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+    }
+    .glass {
+      background: rgba(255,255,255,.044);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 32px 110px rgba(0,0,0,.32);
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.072), rgba(255,255,255,.030));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .quiet {
+      background: rgba(255,255,255,.026);
+      border: 1px solid rgba(255,255,255,.080);
+    }
+    .hero { letter-spacing: -.084em; line-height: .84; }
+    .sheen {
+      background: linear-gradient(180deg, #fff 0%, #F0F4FA 42%, #9FA9B8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .blue-sheen {
+      background: linear-gradient(120deg, #F7F9FC 0%, #8DB4FF 52%, #8DF1FF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .mint-sheen {
+      background: linear-gradient(120deg, #F7F9FC 0%, #58E6B1 48%, #8DF1FF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .violet-sheen {
+      background: linear-gradient(120deg, #F7F9FC 0%, #B8A2FF 48%, #8DB4FF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .fade { opacity: 0; transform: translateY(18px); animation: fade .9s cubic-bezier(.2,.75,.22,1) forwards; }
+    .d1 { animation-delay:.08s; } .d2 { animation-delay:.16s; } .d3 { animation-delay:.24s; } .d4 { animation-delay:.32s; }
     @keyframes fade { to { opacity:1; transform:translateY(0); } }
-    .slow { animation:slow 16s ease-in-out infinite; }
-    @keyframes slow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .node { position:absolute; width:12px; height:12px; border-radius:999px; background:#8DF1FF; box-shadow:0 0 30px rgba(141,241,255,.6); }
-    .route-line { position:absolute; height:1px; transform-origin:left center; background:linear-gradient(90deg,rgba(123,167,255,0),rgba(123,167,255,.85),rgba(141,241,255,0)); opacity:.72; }
-    .hover-card { transition:transform .28s ease,border-color .28s ease,background .28s ease; }
-    .hover-card:hover { transform:translateY(-5px); background:rgba(255,255,255,.055); border-color:rgba(141,241,255,.24); }
-    .button { transition:transform .22s ease,background .22s ease,border-color .22s ease; } .button:hover{transform:translateY(-1px)}
-    .button-light { background:#F7F9FC; color:#04060A; } .button-light:hover{background:#DDE6F2}
-    .code { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; }
+    .slow { animation: slow 18s ease-in-out infinite; }
+    @keyframes slow { 0%,100%{ transform:translateY(0) rotate(0deg);} 50%{ transform:translateY(-12px) rotate(.45deg);} }
+    .button { transition: transform .22s ease, background .22s ease, border-color .22s ease; }
+    .button:hover { transform: translateY(-1px); }
+    .button-light { background:#F7F9FC; color:#020306; }
+    .button-light:hover { background:#DDE3EC; }
+    .hover-card { transition: transform .28s ease, border-color .28s ease, background .28s ease; }
+    .hover-card:hover { transform: translateY(-5px); background: rgba(255,255,255,.052); border-color: rgba(255,255,255,.16); }
+    .line-glow { height:1px; background:linear-gradient(90deg, transparent, rgba(141,180,255,.70), rgba(255,255,255,.46), transparent); }
+    .node { position:absolute; width:10px; height:10px; border-radius:999px; background:#8DB4FF; box-shadow:0 0 30px rgba(141,180,255,.65); }
+    .route-line { position:absolute; height:1px; transform-origin:left center; background:linear-gradient(90deg, rgba(141,180,255,0), rgba(141,180,255,.8), rgba(141,241,255,0)); opacity:.70; }
+    .code { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    .chip { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .9rem; border-radius:999px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.030); font-size:.78rem; font-weight:500; color: rgba(247,249,252,.62); transition: all .22s ease; }
+    .chip:hover { color:#fff; background: rgba(255,255,255,.055); border-color: rgba(141,241,255,.24); }
+    .chip-dot { width:6px; height:6px; border-radius:999px; background:#8DB4FF; box-shadow:0 0 12px rgba(141,180,255,.7); }
+
+    .stat-num { font-size: clamp(2.4rem, 1.8rem + 3vw, 4rem); font-weight:900; letter-spacing:-.06em; line-height:1; }
+    .stat-num.sheen { -webkit-text-fill-color: transparent; }
+
+    .terminal { background:#05070D; border:1px solid rgba(255,255,255,.10); border-radius:18px; overflow:hidden; box-shadow: 0 30px 110px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06); }
+    .terminal__bar { display:flex; align-items:center; gap:.5rem; padding:.9rem 1.1rem; border-bottom:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.022); }
+    .terminal__light { width:11px; height:11px; border-radius:999px; }
+    .terminal__light--r { background:#FF5F57; }
+    .terminal__light--y { background:#FFBD2E; }
+    .terminal__light--g { background:#28C840; }
+    .terminal__title { margin-left:.7rem; font-size:.72rem; color: rgba(247,249,252,.40); font-weight:500; }
+    .terminal__body { padding:1.4rem 1.4rem 1.6rem; font-size:.86rem; line-height:1.85; color: rgba(247,249,252,.78); }
+    .terminal__prompt { color: #58E6B1; }
+    .terminal__ok { color:#58E6B1; }
+    .terminal__warn { color:#FFD166; }
+    .terminal__dim { color: rgba(247,249,252,.34); }
+    .terminal__cmd { color:#8DB4FF; }
+
+    .table-compare { width:100%; border-collapse: separate; border-spacing: 0; }
+    .table-compare th, .table-compare td { padding:1rem 1.2rem; text-align:left; font-size:.9rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .table-compare th { font-weight:600; color: rgba(247,249,252,.48); font-size:.72rem; text-transform: uppercase; letter-spacing:.16em; background: rgba(255,255,255,.02); }
+    .table-compare td.yes { color:#58E6B1; }
+    .table-compare td.no { color: rgba(247,249,252,.30); }
+    .table-compare td.partial { color:#FFD166; }
+    .table-compare tr:last-child td { border-bottom: 0; }
+    .table-compare tr:hover td { background: rgba(255,255,255,.025); }
+
+    .progress { height: 6px; border-radius:999px; background: rgba(255,255,255,.06); overflow:hidden; }
+    .progress > span { display:block; height:100%; background: linear-gradient(90deg, #8DB4FF, #58E6B1); border-radius:999px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+    }
   </style>
 </head>
+
 <body class="grain">
   <div class="field"></div>
+
   <header id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <nav class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-      <div class="mt-5 flex h-14 items-center justify-between rounded-full border border-white/10 bg-black/30 px-4 backdrop-blur-2xl">
+      <div class="mt-5 flex h-14 items-center justify-between rounded-full border border-white/10 bg-black/28 px-4 backdrop-blur-2xl">
         <a href="#" class="flex items-center gap-3" aria-label="BlackRiver Gateway">
-          <div class="h-8 w-8 rounded-xl border border-white/14 bg-white/[.04] flex items-center justify-center">
-            <svg class="h-5 w-5" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 24h10M30 24h10M24 8v10M24 30v10" stroke="#F7F9FC" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="24" r="6" stroke="#8DF1FF" stroke-width="4"/></svg>
+          <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)" />
+            <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/>
+            <path d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/>
+          </svg>
+          <div class="leading-tight">
+            <span class="block text-sm font-semibold tracking-tight">BlackRiver Gateway</span>
+            <span class="block text-[10px] uppercase tracking-[.22em] text-white/34 font-semibold">by BlackRiver AI</span>
           </div>
-          <div><p class="text-sm font-semibold leading-none">BlackRiver Gateway</p><p class="mt-1 text-[10px] uppercase tracking-[.22em] text-white/34">by BlackRiver AI</p></div>
         </a>
-        <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/54">
-          <a href="#routing" class="hover:text-white transition">Routing</a><a href="#tools" class="hover:text-white transition">Tools</a><a href="#architecture" class="hover:text-white transition">Architecture</a><a href="#enterprise" class="hover:text-white transition">Enterprise</a><a href="#contact" class="hover:text-white transition">Contact</a>
+
+        <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/52">
+          <a href="#routing" class="hover:text-white transition">Routing</a>
+          <a href="#tools" class="hover:text-white transition">Tools</a>
+          <a href="#architecture" class="hover:text-white transition">Architecture</a>
+          <a href="#enterprise" class="hover:text-white transition">Enterprise</a>
+          <a href="#contact" class="hover:text-white transition">Contact</a>
         </div>
-        <a href="index.html" class="hidden sm:inline-flex rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/70 hover:bg-white/8 hover:text-white transition">← BlackRiver AI</a>
-        <a href="#contact" class="hidden sm:inline-flex rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/70 hover:bg-white/8 hover:text-white transition">Request access</a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="index.html" class="rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/62 hover:bg-white/8 hover:text-white transition">← BlackRiver AI</a>
+          <a href="#contact" class="rounded-full border border-white/10 px-4 py-2 text-[13px] font-semibold text-white/62 hover:bg-white/8 hover:text-white transition">Request access</a>
+        </div>
       </div>
     </nav>
   </header>
 
   <main class="relative z-10">
-    <section class="min-h-screen flex items-center pt-28 pb-20">
+
+    <!-- ===================== HERO ===================== -->
+    <section id="hero" class="min-h-screen flex items-center pt-28 pb-20">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 w-full">
-        <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-16 lg:gap-24 items-center">
+        <div class="grid lg:grid-cols-[1.02fr_.98fr] gap-16 lg:gap-24 items-center">
           <div class="fade">
             <p class="mb-8 text-xs uppercase tracking-[.34em] text-white/34 font-semibold">AI routing infrastructure</p>
-            <h1 class="hero text-[4.0rem] sm:text-[6.1rem] lg:text-[8.0rem] font-black"><span class="sheen">One gateway.</span><br /><span class="text-white">Every model.</span></h1>
-            <p class="mt-8 max-w-2xl text-xl sm:text-2xl leading-9 text-white/56 font-light">A control layer between your AI tools, coding agents and model providers.</p>
+
+            <h1 class="hero text-[4.05rem] sm:text-[6.1rem] lg:text-[7.45rem] xl:text-[8.05rem] font-black">
+              <span class="sheen">One gateway.</span><br />
+              <span class="text-white">Every model.</span>
+            </h1>
+
+            <p class="mt-8 max-w-2xl text-xl sm:text-2xl leading-9 text-white/56 font-light">
+              A control layer between your AI tools, coding agents and model providers. Auto-fallback, quota-aware routing, local or remote.
+            </p>
+
             <div class="mt-10 flex flex-col sm:flex-row gap-3">
-              <a href="#routing" class="button button-light inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold">See how it routes</a>
-              <a href="#contact" class="button inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white">Talk to BlackRiver AI</a>
+              <a href="#quickstart" class="button button-light inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold">Start routing</a>
+              <a href="#architecture" class="button inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[.035] px-6 py-3.5 text-sm font-bold text-white/72 hover:bg-white/[.07] hover:text-white">See architecture</a>
             </div>
-            <div class="mt-10 flex flex-wrap gap-2">
-              <span class="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-xs font-semibold text-white/52">OpenAI-compatible endpoint</span>
-              <span class="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-xs font-semibold text-white/52">Provider fallback</span>
-              <span class="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-xs font-semibold text-white/52">Quota-aware routing</span>
-              <span class="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-xs font-semibold text-white/52">Local or remote</span>
+
+            <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-white/42">
+              <span><strong class="text-white">236</strong> providers</span>
+              <span class="text-white/20">·</span>
+              <span><strong class="text-white">90+</strong> free</span>
+              <span class="text-white/20">·</span>
+              <span><strong class="text-white">15–95%</strong> saved</span>
+              <span class="text-white/20">·</span>
+              <span>OpenAI-compatible</span>
             </div>
           </div>
+
           <div class="relative fade d1">
             <div class="absolute -inset-16 rounded-full bg-br-blue/10 blur-3xl"></div>
+
             <div class="relative slow">
+              <div class="terminal mb-4">
+                <div class="terminal__bar">
+                  <span class="terminal__light terminal__light--r"></span>
+                  <span class="terminal__light terminal__light--y"></span>
+                  <span class="terminal__light terminal__light--g"></span>
+                  <span class="terminal__title">gateway.js — auto-fallback</span>
+                </div>
+                <pre class="terminal__body m-0"><code><span class="terminal__prompt">$</span> <span class="terminal__cmd">blackriver-gateway</span> start
+<span class="terminal__dim">›</span> claude ........ <span class="terminal__ok">ok</span>
+<span class="terminal__dim">›</span> <span class="terminal__warn">quota out → glm $0.50</span>
+<span class="terminal__dim">›</span> <span class="terminal__ok">switched in 8ms</span>
+<span class="terminal__dim">›</span> openai, gemini, mistral ... <span class="terminal__ok">ready</span></code></pre>
+              </div>
+
               <div class="panel rounded-[2.4rem] p-6 sm:p-8 shadow-deep">
-                <div class="relative aspect-square rounded-[1.95rem] border border-white/10 bg-black/24 overflow-hidden">
-                  <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 35%, rgba(123,167,255,.16), transparent 42%), radial-gradient(circle at 50% 78%, rgba(89,240,183,.07), transparent 36%);"></div>
-                  <div class="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 h-24 w-24 rounded-[2rem] border border-white/14 bg-white/[.06] backdrop-blur-xl flex items-center justify-center shadow-blue">
-                    <svg class="h-10 w-10" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 24h10M30 24h10M24 8v10M24 30v10" stroke="#F7F9FC" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="24" r="6" stroke="#8DF1FF" stroke-width="4"/></svg>
+                <div class="relative aspect-square rounded-[1.95rem] border border-white/10 bg-black/22 overflow-hidden">
+                  <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 30%, rgba(141,180,255,.14), transparent 42%), radial-gradient(circle at 50% 78%, rgba(88,230,177,.06), transparent 36%);"></div>
+                  <div class="absolute inset-x-0 top-[34%] line-glow"></div>
+                  <div class="absolute inset-x-0 top-[63%] line-glow opacity-30"></div>
+
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="relative h-[72%] w-[72%]">
+                      <div class="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-[2rem] border border-white/14 bg-white/[.055] backdrop-blur-xl flex items-center justify-center shadow-glow">
+                        <svg class="h-11 w-11" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                          <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)"/>
+                          <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/>
+                          <path d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/>
+                        </svg>
+                      </div>
+
+                      <div class="node left-[8%] top-[12%]"></div>
+                      <div class="node right-[8%] top-[20%]" style="background:#58E6B1"></div>
+                      <div class="node left-[12%] bottom-[18%]" style="background:#B8A2FF"></div>
+                      <div class="node right-[12%] bottom-[13%]" style="background:#FFD166"></div>
+                      <div class="node left-[50%] top-[2%]" style="background:#F7F9FC"></div>
+                      <div class="node left-[50%] bottom-[4%]" style="background:#8DF1FF"></div>
+
+                      <div class="route-line left-[12%] top-[15%] w-[44%] rotate-[33deg]"></div>
+                      <div class="route-line right-[14%] top-[22%] w-[40%] rotate-[-27deg]"></div>
+                      <div class="route-line left-[14%] bottom-[21%] w-[42%] rotate-[-28deg]"></div>
+                      <div class="route-line right-[14%] bottom-[16%] w-[42%] rotate-[28deg]"></div>
+                      <div class="route-line left-[50%] top-[5%] w-[40%] rotate-90 origin-left"></div>
+                      <div class="route-line left-[50%] bottom-[7%] w-[38%] -rotate-90 origin-left"></div>
+                    </div>
                   </div>
-                  <div class="node left-[16%] top-[18%]"></div><div class="node right-[17%] top-[22%]" style="background:#59F0B7"></div><div class="node left-[18%] bottom-[20%]" style="background:#B59CFF"></div><div class="node right-[15%] bottom-[18%]" style="background:#FFD166"></div><div class="node left-[50%] top-[11%]" style="background:#F7F9FC"></div><div class="node left-[50%] bottom-[11%]" style="background:#7BA7FF"></div>
-                  <div class="route-line left-[20%] top-[21%] w-[38%] rotate-[28deg]"></div><div class="route-line right-[20%] top-[25%] w-[36%] rotate-[-28deg]"></div><div class="route-line left-[21%] bottom-[24%] w-[38%] rotate-[-28deg]"></div><div class="route-line right-[19%] bottom-[23%] w-[36%] rotate-[28deg]"></div><div class="route-line left-[50%] top-[14%] w-[36%] rotate-90 origin-left"></div><div class="route-line left-[50%] bottom-[14%] w-[36%] -rotate-90 origin-left"></div>
+
                   <div class="absolute bottom-5 left-5 right-5 grid grid-cols-3 gap-2 text-center">
                     <div class="rounded-full border border-white/10 bg-white/[.035] px-2 py-2 text-[10px] uppercase tracking-[.18em] text-white/34">Tools</div>
                     <div class="rounded-full border border-white/10 bg-white/[.035] px-2 py-2 text-[10px] uppercase tracking-[.18em] text-white/34">Gateway</div>
@@ -107,106 +299,879 @@
                   </div>
                 </div>
               </div>
-              <div class="absolute -bottom-6 -left-5 hidden sm:block glass rounded-[1.7rem] p-5 w-64">
-                <p class="text-[10px] uppercase tracking-[.24em] text-white/34 font-semibold">Product family</p>
-                <p class="mt-2 text-xl font-bold">BlackRiver Gateway</p>
-                <p class="mt-2 text-sm text-white/38">Infrastructure layer inside the BlackRiver AI portfolio.</p>
-              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <section id="routing" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+
+    <!-- ===================== THE PROMISE ===================== -->
+    <section id="promise" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-[.78fr_1.22fr] gap-14 lg:gap-20 items-start">
-          <div><p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Routing</p><h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Stop hardcoding your AI stack.</h2></div>
-          <div class="text-lg sm:text-xl leading-9 text-white/56 font-light"><p>BlackRiver Gateway gives teams one endpoint for many providers. Requests can be routed by cost, model capability, quota, latency, availability or internal policy.</p><p class="mt-6">When one provider fails, hits limits or becomes too expensive for the task, the gateway can move traffic without forcing every tool to be reconfigured.</p></div>
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">The promise</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96] max-w-4xl">One endpoint. Never stop building.</h2>
+        </header>
+
+        <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">Resilience</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">Never hit limits</h3>
+            <p class="mt-4 text-white/46 leading-7">Auto-fallback across providers in milliseconds. Quota out? The next provider takes over — zero downtime.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">Cost</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">Save up to 95% on tokens</h3>
+            <p class="mt-4 text-white/46 leading-7">Route by cost, capability, quota or policy. Stops premium endpoints from being used for tasks that don't need them.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-amber font-semibold mb-8">Pricing</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">$0 to start</h3>
+            <p class="mt-4 text-white/46 leading-7">Self-host for free. 90+ free-tier providers onboard by default. No credit card. No vendor lock-in.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-cyan font-semibold mb-8">Compatibility</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">Every tool works</h3>
+            <p class="mt-4 text-white/46 leading-7">OpenAI-compatible endpoint. Claude Code, Codex, Cursor, Cline, OpenCode, Roo, Copilot — point, route, build.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">Surface</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">One endpoint, many decisions</h3>
+            <p class="mt-4 text-white/46 leading-7">Provider, model, fallback, quota, cost, latency and policy are decided at the gateway — not inside every tool.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold mb-8">Operations</p>
+            <h3 class="text-2xl font-black tracking-[-.04em]">Production-grade</h3>
+            <p class="mt-4 text-white/46 leading-7">Local, remote or private. Audit logs, observability, enterprise controls. Built for teams shipping AI in production.</p>
+          </article>
         </div>
+      </div>
+    </section>
+
+    <!-- ===================== ROUTING / PROVIDERS ===================== -->
+    <section id="routing" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
+          <div class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Routing</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Stop hardcoding your AI stack.</h2>
+          </div>
+          <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
+            <p>BlackRiver Gateway gives teams one endpoint for many providers. Requests can be routed by cost, model capability, quota, latency, availability or internal policy.</p>
+            <p class="mt-6">When one provider fails, hits limits or becomes too expensive for the task, the gateway moves traffic — without forcing every tool to be reconfigured.</p>
+          </div>
+        </div>
+
         <div class="mt-16 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
-          <article class="bg-br-black p-7 sm:p-9"><p class="text-sm text-white/32 mb-10">01</p><h3 class="text-2xl font-bold">Subscription first</h3><p class="mt-4 text-white/48 leading-7">Use the accounts and subscriptions your team already pays for before sending traffic elsewhere.</p></article>
-          <article class="bg-br-black p-7 sm:p-9"><p class="text-sm text-white/32 mb-10">02</p><h3 class="text-2xl font-bold">Fallback routing</h3><p class="mt-4 text-white/48 leading-7">Move requests to alternative providers when rate limits, outages or quota exhaustion hit.</p></article>
-          <article class="bg-br-black p-7 sm:p-9"><p class="text-sm text-white/32 mb-10">03</p><h3 class="text-2xl font-bold">Cost control</h3><p class="mt-4 text-white/48 leading-7">Select models based on task value instead of always defaulting to premium endpoints.</p></article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">01</p>
+            <h3 class="text-2xl font-bold">Subscription first</h3>
+            <p class="mt-4 text-white/48 leading-7">Use the accounts and subscriptions your team already pays for before sending traffic elsewhere.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">02</p>
+            <h3 class="text-2xl font-bold">Fallback routing</h3>
+            <p class="mt-4 text-white/48 leading-7">Move requests to alternative providers when rate limits, outages or quota exhaustion hit.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-sm text-white/32 mb-10">03</p>
+            <h3 class="text-2xl font-bold">Cost control</h3>
+            <p class="mt-4 text-white/48 leading-7">Select models based on task value instead of always defaulting to premium endpoints.</p>
+          </article>
         </div>
-      </div>
-    </section>
-    <section id="tools" class="py-24 sm:py-32">
-      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
-          <div><p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Tools</p><h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Built for the tools teams actually use.</h2></div>
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="hover-card quiet rounded-[2rem] p-7"><p class="text-xs uppercase tracking-[.24em] text-br-blue font-semibold">Coding agents</p><h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Claude Code, Codex, Cursor</h3><p class="mt-4 text-white/46 leading-7">Route coding traffic through one controlled layer.</p></div>
-            <div class="hover-card quiet rounded-[2rem] p-7"><p class="text-xs uppercase tracking-[.24em] text-br-mint font-semibold">AI workflows</p><h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Agents, Cline, OpenCode</h3><p class="mt-4 text-white/46 leading-7">Avoid brittle one-provider workflows.</p></div>
-            <div class="hover-card quiet rounded-[2rem] p-7"><p class="text-xs uppercase tracking-[.24em] text-br-violet font-semibold">Providers</p><h3 class="mt-4 text-2xl font-black tracking-[-.035em]">OpenAI, Anthropic, Gemini</h3><p class="mt-4 text-white/46 leading-7">Keep optionality between major model ecosystems.</p></div>
-            <div class="hover-card quiet rounded-[2rem] p-7"><p class="text-xs uppercase tracking-[.24em] text-br-amber font-semibold">Deployment</p><h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Local, remote or private</h3><p class="mt-4 text-white/46 leading-7">Run where your security and operational model requires.</p></div>
+
+        <!-- Provider chips -->
+        <div class="mt-20">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Providers we route through</p>
+          <h3 class="text-3xl sm:text-5xl font-black tracking-[-.05em] leading-[1] max-w-3xl">236 providers. One OpenAI-compatible endpoint.</h3>
+          <p class="mt-4 max-w-2xl text-white/52 leading-7">From the largest commercial model APIs to free tiers, local models and self-hosted backends. New providers ship in days, not quarters.</p>
+
+          <div class="mt-10 flex flex-wrap gap-2">
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>OpenAI</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Anthropic</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>Google Gemini</span>
+            <span class="chip"><span class="chip-dot"></span>Mistral</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>OpenRouter</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>Groq</span>
+            <span class="chip"><span class="chip-dot"></span>Cohere</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Together</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>Fireworks</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>Perplexity</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>DeepSeek</span>
+            <span class="chip"><span class="chip-dot"></span>xAI</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>Replicate</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Anyscale</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>Lepton</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>Novita</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>DeepInfra</span>
+            <span class="chip"><span class="chip-dot"></span>AI21</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>Upstage</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Voyage</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>Jina</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>Cloudflare AI</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>Cerebras</span>
+            <span class="chip"><span class="chip-dot"></span>NVIDIA NIM</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>SambaNova</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Friendli</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>Hyperbolic</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>AIOZ</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>Nebius</span>
+            <span class="chip"><span class="chip-dot"></span>Chutes</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>Kluster</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>Submodel</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>Pollinations</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>LongCat</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>Kiro</span>
+            <span class="chip"><span class="chip-dot"></span>Antigravity</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DB4FF"></span>Ollama</span>
+            <span class="chip"><span class="chip-dot" style="background:#B8A2FF"></span>LM Studio</span>
+            <span class="chip"><span class="chip-dot" style="background:#58E6B1"></span>vLLM</span>
+            <span class="chip"><span class="chip-dot" style="background:#8DF1FF"></span>LocalAI</span>
+            <span class="chip"><span class="chip-dot" style="background:#FFD166"></span>+ 196 more</span>
           </div>
         </div>
       </div>
     </section>
-    <section id="architecture" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+
+    <!-- ===================== QUICKSTART ===================== -->
+    <section id="quickstart" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div class="panel rounded-[2.5rem] overflow-hidden">
-          <div class="grid lg:grid-cols-[.9fr_1.1fr]">
-            <div class="p-8 sm:p-12 lg:p-16"><p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Architecture</p><h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">One endpoint. Many decisions.</h2><p class="mt-6 text-lg leading-8 text-white/50">The gateway exposes an OpenAI-compatible API surface while routing traffic to multiple provider backends behind the scenes.</p></div>
-            <div class="border-t lg:border-t-0 lg:border-l border-white/10 bg-black/24 p-5 sm:p-8">
-              <div class="rounded-3xl border border-white/10 bg-[#05070D] overflow-hidden shadow-deep">
-                <div class="flex items-center gap-2 px-5 py-4 border-b border-white/10"><span class="h-3 w-3 rounded-full bg-[#FF5F57]"></span><span class="h-3 w-3 rounded-full bg-[#FFBD2E]"></span><span class="h-3 w-3 rounded-full bg-[#28C840]"></span><span class="ml-3 code text-xs text-white/35">gateway.js</span></div>
-                <pre class="code p-5 sm:p-7 text-sm leading-7 text-white/70 overflow-x-auto"><code>const client = new OpenAI({
-  baseURL: "https://gateway.blackriver.ai/v1",
-  apiKey: process.env.BLACKRIVER_GATEWAY_KEY,
-});
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Quickstart</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Three commands. Zero config.</h2>
+        </header>
 
-const response = await client.chat.completions.create({
-  model: "auto:code",
-  messages: [{ role: "user", content: "Refactor this module" }],
-});
-
-// Gateway decides:
-// provider, model, fallback, quota, cost, policy.</code></pre>
+        <div class="mt-14 grid lg:grid-cols-3 gap-5">
+          <div class="hover-card panel rounded-[1.8rem] p-6 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold">Step 1</p>
+            <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Install &amp; run</h3>
+            <p class="mt-3 text-white/46 leading-7">One command. The gateway starts on localhost with sensible defaults.</p>
+            <div class="mt-6 terminal">
+              <div class="terminal__bar">
+                <span class="terminal__light terminal__light--r"></span>
+                <span class="terminal__light terminal__light--y"></span>
+                <span class="terminal__light terminal__light--g"></span>
+                <span class="terminal__title">shell</span>
               </div>
+              <pre class="terminal__body m-0"><code><span class="terminal__prompt">$</span> <span class="terminal__cmd">npm i -g</span> @blackriver/gateway
+<span class="terminal__prompt">$</span> <span class="terminal__cmd">blackriver-gateway</span> start
+<span class="terminal__dim">› listening on</span> <span class="terminal__ok">http://localhost:8080</span></code></pre>
+            </div>
+          </div>
+
+          <div class="hover-card panel rounded-[1.8rem] p-6 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">Step 2</p>
+            <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Connect a free provider</h3>
+            <p class="mt-3 text-white/46 leading-7">Paste a key or pick a free tier. Quota, cost and capability are detected automatically.</p>
+            <div class="mt-6 terminal">
+              <div class="terminal__bar">
+                <span class="terminal__light terminal__light--r"></span>
+                <span class="terminal__light terminal__light--y"></span>
+                <span class="terminal__light terminal__light--g"></span>
+                <span class="terminal__title">providers.env</span>
+              </div>
+              <pre class="terminal__body m-0"><code><span class="terminal__dim"># any of these, mixed together</span>
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+OPENROUTER_API_KEY=sk-or-...
+
+<span class="terminal__dim"># or pick a free tier</span>
+FREE_PROVIDERS=pollinations,longcat</code></pre>
+            </div>
+          </div>
+
+          <div class="hover-card panel rounded-[1.8rem] p-6 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold">Step 3</p>
+            <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Point your IDE</h3>
+            <p class="mt-3 text-white/46 leading-7">Set the base URL. Existing OpenAI clients work without code changes.</p>
+            <div class="mt-6 terminal">
+              <div class="terminal__bar">
+                <span class="terminal__light terminal__light--r"></span>
+                <span class="terminal__light terminal__light--y"></span>
+                <span class="terminal__light terminal__light--g"></span>
+                <span class="terminal__title">client.js</span>
+              </div>
+              <pre class="terminal__body m-0"><code><span class="terminal__dim">// any OpenAI-compatible tool</span>
+baseURL = <span class="terminal__ok">"https://gateway.blackriver.ai/v1"</span>
+apiKey  = <span class="terminal__ok">"br_..."</span></code></pre>
             </div>
           </div>
         </div>
-        <p class="mt-6 text-xs text-white/30 max-w-4xl">If this product is based on a fork of an open-source project, preserve the original license, attribution and notices in the repository and documentation.</p>
       </div>
     </section>
-    <section id="enterprise" class="py-24 sm:py-32">
+
+    <!-- ===================== FEATURES ===================== -->
+    <section id="features" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Features</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96] max-w-4xl">Everything built in. No add-ons.</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold">Engine</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">Smart combos</h3>
+            <p class="mt-3 text-white/46 leading-7">Auto-combo engine fans a request across providers, merges results and picks the best answer by score, cost or policy.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">State</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">Memory &amp; skills</h3>
+            <p class="mt-3 text-white/46 leading-7">Persistent memory, semantic recall and reusable skills. Context survives model, provider and tool swaps.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-amber font-semibold">Resilience</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">3-layer fallback</h3>
+            <p class="mt-3 text-white/46 leading-7">Provider, model and account fallbacks. If one route is blocked, the next one tries — automatically, in milliseconds.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-cyan font-semibold">Cost</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">Free quota</h3>
+            <p class="mt-3 text-white/46 leading-7">Tracks free-tier usage across providers. Routes around exhausted quotas so paid traffic is the last to be used.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold">Efficiency</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">Compression</h3>
+            <p class="mt-3 text-white/46 leading-7">Cuts 15–95% of eligible tokens with stacked RTK and Caveman-style rewrites before requests leave the gateway.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold">Protocol</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">MCP server</h3>
+            <p class="mt-3 text-white/46 leading-7">95 MCP tools exposed to agents. Let coding agents and copilots drive the gateway themselves.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold">Protocol</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">A2A protocol</h3>
+            <p class="mt-3 text-white/46 leading-7">Agent-to-agent handoff. External agents can negotiate models, context and policy with the gateway directly.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">Routing</p>
+            <h3 class="mt-4 text-xl font-black tracking-[-.035em]">17 routing strategies</h3>
+            <p class="mt-3 text-white/46 leading-7">Cost-first, capability-first, round-robin, weighted, sticky-session, latency-aware, policy-aware and more.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TOOLS / CLIs ===================== -->
+    <section id="tools" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
       <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
-          <div><p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Enterprise</p><h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">From developer router to company control layer.</h2></div>
-          <div class="grid gap-4">
-            <div class="hover-card panel rounded-[2rem] p-7 sm:p-8"><h3 class="text-2xl sm:text-3xl font-black tracking-[-.04em]">Policy-aware routing</h3><p class="mt-4 text-white/48 leading-7">Define allowed providers, model tiers and fallback behavior by team, tool or project.</p></div>
-            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8"><h3 class="text-2xl sm:text-3xl font-black tracking-[-.04em]">Usage visibility</h3><p class="mt-4 text-white/46 leading-7">See which tools, agents and workflows are consuming AI budget through the gateway.</p></div>
-            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8"><h3 class="text-2xl sm:text-3xl font-black tracking-[-.04em]">TokenOptimizer integration</h3><p class="mt-4 text-white/46 leading-7">Gateway traffic can feed cost intelligence, audit reports and optimization dashboards in TokenOptimizer.</p></div>
+          <div class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Tools</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">One config. Every coding tool works.</h2>
+            <p class="mt-6 text-white/50 leading-8 max-w-xl">Point Claude Code, Codex, Cursor, Cline, OpenCode or any OpenAI-compatible client at the gateway. Routing, fallback and policy become a setting, not a refactor.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="hover-card quiet rounded-[2rem] p-7">
+              <p class="text-xs uppercase tracking-[.24em] text-br-blue font-semibold">Coding agents</p>
+              <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Claude Code, Codex, Cursor</h3>
+              <p class="mt-4 text-white/46 leading-7">Route coding traffic through one controlled layer. Keep using your existing IDE.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7">
+              <p class="text-xs uppercase tracking-[.24em] text-br-mint font-semibold">AI workflows</p>
+              <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Cline, OpenCode, Roo</h3>
+              <p class="mt-4 text-white/46 leading-7">Avoid brittle one-provider workflows. Fallback, retry and policy are handled at the edge.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7">
+              <p class="text-xs uppercase tracking-[.24em] text-br-violet font-semibold">Copilots</p>
+              <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Copilot, Continue, Kiro</h3>
+              <p class="mt-4 text-white/46 leading-7">Standard OpenAI-compatible endpoint. Drop in, route out.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7">
+              <p class="text-xs uppercase tracking-[.24em] text-br-amber font-semibold">Self-hosted</p>
+              <h3 class="mt-4 text-2xl font-black tracking-[-.035em]">Antigravity, Kilocode</h3>
+              <p class="mt-4 text-white/46 leading-7">Use the gateway as the routing brain for local and private deployments.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
-    <section id="contact" class="py-24 sm:py-32 border-t border-white/10">
+
+    <!-- ===================== WHY ===================== -->
+    <section id="why" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Why</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Why BlackRiver Gateway</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">Optionality</p>
+            <h3 class="text-2xl font-bold">No vendor lock-in</h3>
+            <p class="mt-4 text-white/46 leading-7">Every provider becomes a route. Switching is a config change, not a project. The gateway treats each model the same.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">Resilience</p>
+            <h3 class="text-2xl font-bold">Tools stay online</h3>
+            <p class="mt-4 text-white/46 leading-7">When one provider goes down, the gateway keeps your IDE, agents and copilots working — automatically, in the background.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9 hover-card">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">Economics</p>
+            <h3 class="text-2xl font-bold">Cheaper by default</h3>
+            <p class="mt-4 text-white/46 leading-7">Use existing subscriptions, free tiers and cheaper models first. Premium endpoints are reserved for tasks that need them.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMPARE ===================== -->
+    <section id="compare" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Compare</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">How we compare.</h2>
+        </header>
+
+        <div class="mt-14 panel rounded-[2rem] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="table-compare">
+              <thead>
+                <tr>
+                  <th>Capability</th>
+                  <th>BlackRiver Gateway</th>
+                  <th>LiteLLM</th>
+                  <th>Portkey</th>
+                  <th>OpenRouter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>OpenAI-compatible endpoint</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+                <tr><td>Self-hostable</td><td class="yes">Yes — local or remote</td><td class="yes">Yes</td><td class="partial">Cloud-first</td><td class="no">No</td></tr>
+                <tr><td>Auto-fallback across providers</td><td class="yes">3-layer</td><td class="partial">Manual</td><td class="partial">Manual</td><td class="yes">Yes</td></tr>
+                <tr><td>Free-tier routing</td><td class="yes">90+ providers</td><td class="no">No</td><td class="no">No</td><td class="partial">Limited</td></tr>
+                <tr><td>MCP server (95 tools)</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+                <tr><td>A2A protocol</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+                <tr><td>Token compression</td><td class="yes">15–95%</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+                <tr><td>Memory &amp; skills</td><td class="yes">Built in</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+                <tr><td>TokenOptimizer integration</td><td class="yes">Native</td><td class="no">No</td><td class="partial">Webhook</td><td class="no">No</td></tr>
+                <tr><td>Pricing model</td><td class="yes">Free self-host</td><td class="yes">Free self-host</td><td class="partial">Usage-based</td><td class="partial">Per-token</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ARCHITECTURE / DEPLOY ===================== -->
+    <section id="architecture" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
+          <div class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Architecture</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">One endpoint. Many decisions.</h2>
+            <p class="mt-6 text-white/50 leading-8 max-w-xl">The gateway exposes an OpenAI-compatible API surface while routing traffic to multiple provider backends behind the scenes.</p>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-[#05070D] overflow-hidden shadow-deep">
+            <div class="flex items-center gap-2 px-5 py-4 border-b border-white/10">
+              <span class="h-3 w-3 rounded-full bg-[#FF5F57]"></span>
+              <span class="h-3 w-3 rounded-full bg-[#FFBD2E]"></span>
+              <span class="h-3 w-3 rounded-full bg-[#28C840]"></span>
+              <span class="ml-3 code text-xs text-white/35">gateway.js</span>
+            </div>
+            <pre class="code p-5 sm:p-7 text-sm leading-7 text-white/70 overflow-x-auto"><code><span style="color:#98A2B3">// any OpenAI-compatible client</span>
+const client = <span style="color:#FFD166">new</span> OpenAI({
+  baseURL: <span style="color:#58E6B1">"https://gateway.blackriver.ai/v1"</span>,
+  apiKey:  process.env.BLACKRIVER_GATEWAY_KEY,
+});
+
+const response = <span style="color:#FFD166">await</span> client.chat.completions.create({
+  model: <span style="color:#58E6B1">"auto:code"</span>,
+  messages: [{ role: <span style="color:#58E6B1">"user"</span>, content: <span style="color:#58E6B1">"Refactor this module"</span> }],
+});
+
+<span style="color:#98A2B3">// Gateway decides:</span>
+<span style="color:#98A2B3">//   provider, model, fallback, quota, cost, policy.</span></code></pre>
+          </div>
+        </div>
+
+        <!-- Deploy platforms -->
+        <div class="mt-24">
+          <header class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Where it runs</p>
+            <h3 class="text-3xl sm:text-5xl font-black tracking-[-.05em] leading-[1]">Deploy anywhere your stack lives.</h3>
+          </header>
+
+          <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold">01</p>
+              <p class="mt-3 text-lg font-bold">npm</p>
+              <p class="mt-2 text-sm text-white/42">Local install, runs on any Node host.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">02</p>
+              <p class="mt-3 text-lg font-bold">Docker</p>
+              <p class="mt-2 text-sm text-white/42">Single image, single port, zero config.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold">03</p>
+              <p class="mt-3 text-lg font-bold">Desktop</p>
+              <p class="mt-2 text-sm text-white/42">Native app for macOS, Windows, Linux.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-amber font-semibold">04</p>
+              <p class="mt-3 text-lg font-bold">ARM</p>
+              <p class="mt-2 text-sm text-white/42">Apple Silicon, Raspberry Pi, Graviton.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-cyan font-semibold">05</p>
+              <p class="mt-3 text-lg font-bold">Termux</p>
+              <p class="mt-2 text-sm text-white/42">Run the gateway on an Android phone.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold">06</p>
+              <p class="mt-3 text-lg font-bold">PWA</p>
+              <p class="mt-2 text-sm text-white/42">Browser-only dashboard for quick routing.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold">07</p>
+              <p class="mt-3 text-lg font-bold">OpenCode plugin</p>
+              <p class="mt-2 text-sm text-white/42">Drop-in for OpenCode-based IDEs.</p>
+            </div>
+            <div class="hover-card quiet rounded-3xl p-6">
+              <p class="text-[10px] uppercase tracking-[.24em] text-white/44 font-semibold">08</p>
+              <p class="mt-3 text-lg font-bold">Source</p>
+              <p class="mt-2 text-sm text-white/42">Build it yourself. MIT-style license.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMBOS ===================== -->
+    <section id="combos" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-14 items-start">
+          <header class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Combos</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Auto-combo engine.</h2>
+            <p class="mt-6 text-white/52 leading-8 max-w-xl">A single request can fan out across multiple models in parallel, get scored, deduplicated and merged. The gateway picks the answer that best fits the policy you defined — without your tool knowing.</p>
+          </header>
+
+          <div class="panel rounded-[2rem] p-6 sm:p-8">
+            <div class="grid sm:grid-cols-3 gap-3 text-center">
+              <div class="quiet rounded-2xl p-4">
+                <p class="text-[10px] uppercase tracking-[.22em] text-white/40">Request</p>
+                <p class="mt-2 text-sm font-semibold">"Refactor this module"</p>
+              </div>
+              <div class="quiet rounded-2xl p-4">
+                <p class="text-[10px] uppercase tracking-[.22em] text-br-mint">Fan-out</p>
+                <p class="mt-2 text-sm font-semibold">3 models in parallel</p>
+              </div>
+              <div class="quiet rounded-2xl p-4">
+                <p class="text-[10px] uppercase tracking-[.22em] text-br-blue">Score</p>
+                <p class="mt-2 text-sm font-semibold">Best answer by policy</p>
+              </div>
+            </div>
+
+            <div class="mt-6 space-y-3">
+              <div>
+                <div class="flex items-center justify-between text-xs text-white/48"><span>Claude Sonnet</span><span class="text-br-mint">0.92</span></div>
+                <div class="mt-2 progress"><span style="width:92%"></span></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs text-white/48"><span>GPT-4o</span><span class="text-br-blue">0.81</span></div>
+                <div class="mt-2 progress"><span style="width:81%"></span></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs text-white/48"><span>Gemini 1.5 Pro</span><span class="text-br-violet">0.74</span></div>
+                <div class="mt-2 progress"><span style="width:74%"></span></div>
+              </div>
+            </div>
+
+            <div class="mt-6 quiet rounded-2xl p-4 text-sm text-white/60">
+              <span class="text-br-mint font-semibold">Result:</span> Claude Sonnet wins on quality, but Gemini wins on cost — policy decides.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== QUOTA / FREE TIER ===================== -->
+    <section id="quota" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade text-center max-w-3xl mx-auto">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Free tier</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]"><span class="mint-sheen">~1.6B free tokens a month.</span></h2>
+          <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">By combining free tiers across providers, the gateway exposes close to 1.6 billion free tokens every month — without spinning up a single paid account.</p>
+        </header>
+
+        <div class="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <div class="bg-br-black p-7 sm:p-9">
+            <p class="stat-num sheen">90+</p>
+            <p class="mt-3 text-sm text-white/48 leading-6">Free-tier providers onboard by default.</p>
+          </div>
+          <div class="bg-br-black p-7 sm:p-9">
+            <p class="stat-num sheen">11</p>
+            <p class="mt-3 text-sm text-white/48 leading-6">Free-forever providers, no rate cliff.</p>
+          </div>
+          <div class="bg-br-black p-7 sm:p-9">
+            <p class="stat-num sheen">1.6B</p>
+            <p class="mt-3 text-sm text-white/48 leading-6">Combined free monthly tokens.</p>
+          </div>
+          <div class="bg-br-black p-7 sm:p-9">
+            <p class="stat-num sheen">$0</p>
+            <p class="mt-3 text-sm text-white/48 leading-6">Cost to start. Self-host forever.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMPRESSION ===================== -->
+    <section id="compression" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Compression</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Save <span class="blue-sheen">15–95%</span> on tokens.</h2>
+            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">TokenOptimizer-aware compression runs at the gateway. System prompts, tool outputs and long contexts are rewritten before they leave — typically 60% on tool-heavy sessions, up to 95% on chatty ones.</p>
+          </div>
+
+          <div class="panel rounded-[2rem] p-6 sm:p-8">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-white/48">Raw prompt</span>
+              <span class="text-white/40 font-mono">1,420 tokens</span>
+            </div>
+            <div class="mt-3 h-3 rounded-full bg-white/6 overflow-hidden"><div class="h-full bg-gradient-to-r from-br-violet/60 to-br-blue/60" style="width:100%"></div></div>
+
+            <div class="mt-6 flex items-center justify-between text-sm">
+              <span class="text-white/48">RTK compression</span>
+              <span class="text-br-mint font-mono">540 tokens <span class="text-white/30">(-62%)</span></span>
+            </div>
+            <div class="mt-3 h-3 rounded-full bg-white/6 overflow-hidden"><div class="h-full bg-gradient-to-r from-br-blue to-br-mint" style="width:38%"></div></div>
+
+            <div class="mt-6 flex items-center justify-between text-sm">
+              <span class="text-white/48">+ Caveman rewrite</span>
+              <span class="text-br-cyan font-mono">180 tokens <span class="text-white/30">(-87%)</span></span>
+            </div>
+            <div class="mt-3 h-3 rounded-full bg-white/6 overflow-hidden"><div class="h-full bg-gradient-to-r from-br-cyan to-br-mint" style="width:13%"></div></div>
+
+            <div class="mt-6 quiet rounded-2xl p-4 text-sm text-white/56">
+              Same task. Same model. Different bill. <span class="text-white font-semibold">TokenOptimizer</span> turns this into a measurable audit.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== RESILIENCE ===================== -->
+    <section id="resilience" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Resilience</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96] max-w-4xl">3 layers of fallback. Zero downtime.</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">Layer 1 — Provider</p>
+            <h3 class="text-2xl font-bold">Cross-provider</h3>
+            <p class="mt-4 text-white/46 leading-7">If a provider returns an error, hits a rate limit or times out, the gateway moves the request to the next configured provider in milliseconds.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">Layer 2 — Model</p>
+            <h3 class="text-2xl font-bold">Cross-model</h3>
+            <p class="mt-4 text-white/46 leading-7">If a specific model is degraded or removed, the gateway re-routes to the next model in the capability tier — without the client knowing.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">Layer 3 — Account</p>
+            <h3 class="text-2xl font-bold">Cross-account</h3>
+            <p class="mt-4 text-white/46 leading-7">If a subscription is exhausted, the gateway shifts traffic to another account, free tier or organization pool — also without the client knowing.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROXY ===================== -->
+    <section id="proxy" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Proxy</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">3-level proxy. Stealth by default.</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">1 — Sticky</p>
+            <h3 class="text-2xl font-bold">Sticky sessions</h3>
+            <p class="mt-4 text-white/46 leading-7">Pin a session, model or tool to a specific account or provider to preserve state and avoid context churn.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">2 — Stealth</p>
+            <h3 class="text-2xl font-bold">Stealth mode</h3>
+            <p class="mt-4 text-white/46 leading-7">Header rewriting, fingerprint rotation and traffic shaping keep sessions under the radar of aggressive rate limits.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">3 — Private</p>
+            <h3 class="text-2xl font-bold">Private &amp; local-first</h3>
+            <p class="mt-4 text-white/46 leading-7">Run entirely on your own hardware, on your own VPC or on a single developer laptop. No telemetry, no lock-in.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <section id="dashboard" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade max-w-4xl">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Dashboard</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">A real dashboard. Not a config file.</h2>
+          <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl">Inspect traffic, replay requests, watch provider health, manage keys and audit every call. The gateway ships with a first-party UI — and a CLI for teams that prefer it.</p>
+        </header>
+
+        <div class="mt-14 grid lg:grid-cols-[1.1fr_.9fr] gap-6">
+          <div class="panel rounded-[2rem] p-6 sm:p-8">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-white/48">Live traffic</span>
+              <span class="rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] uppercase tracking-[.18em] text-br-mint">healthy</span>
+            </div>
+            <div class="mt-6 space-y-2">
+              <div class="quiet rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold">claude-sonnet → claude</p>
+                  <p class="text-xs text-white/40">last 1h · 1,284 req</p>
+                </div>
+                <p class="text-br-mint text-sm font-mono">p95 412ms</p>
+              </div>
+              <div class="quiet rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold">gpt-4o → openai</p>
+                  <p class="text-xs text-white/40">last 1h · 921 req</p>
+                </div>
+                <p class="text-br-blue text-sm font-mono">p95 380ms</p>
+              </div>
+              <div class="quiet rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold">gemini-1.5 → google</p>
+                  <p class="text-xs text-white/40">last 1h · 612 req</p>
+                </div>
+                <p class="text-br-cyan text-sm font-mono">p95 290ms</p>
+              </div>
+              <div class="quiet rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold">glm-4.5 → zhipu</p>
+                  <p class="text-xs text-white/40">last 1h · 410 req</p>
+                </div>
+                <p class="text-br-violet text-sm font-mono">p95 540ms</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="hover-card panel rounded-[2rem] p-6 sm:p-7">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold">Inspect</p>
+              <h3 class="mt-3 text-xl font-bold">Replay any request</h3>
+              <p class="mt-2 text-sm text-white/48 leading-6">Step through headers, body and routing decisions. Rerun against a different provider, model or policy.</p>
+            </div>
+            <div class="hover-card panel rounded-[2rem] p-6 sm:p-7">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">Audit</p>
+              <h3 class="mt-3 text-xl font-bold">Full event log</h3>
+              <p class="mt-2 text-sm text-white/48 leading-6">Every call, key rotation, fallback and policy change is logged. Export to TokenOptimizer for cost analysis.</p>
+            </div>
+            <div class="hover-card panel rounded-[2rem] p-6 sm:p-7">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold">CLI</p>
+              <h3 class="mt-3 text-xl font-bold">First-party CLI</h3>
+              <p class="mt-2 text-sm text-white/48 leading-6">Manage providers, policies and secrets from the terminal. Scriptable. Script-friendly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROTOCOLS ===================== -->
+    <section id="protocols" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Protocols</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96] max-w-4xl">Connect an agent — it drives the gateway itself.</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-3 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">MCP</p>
+            <h3 class="text-2xl font-bold">MCP server</h3>
+            <p class="mt-4 text-white/46 leading-7">95 Model Context Protocol tools exposed to agents. Inspect, replay, route, fallback, switch policy — all from inside the agent.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">A2A</p>
+            <h3 class="text-2xl font-bold">A2A server</h3>
+            <p class="mt-4 text-white/46 leading-7">Agent-to-agent handoff. External agents negotiate models, context and policy with the gateway directly over a typed protocol.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-9">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">Cloud agents</p>
+            <h3 class="text-2xl font-bold">Cloud agents</h3>
+            <p class="mt-4 text-white/46 leading-7">Cloud-hosted agents can connect, register and use the gateway as a shared routing brain across the team.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PLATFORM ===================== -->
+    <section id="platform" class="py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <header class="fade">
+          <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Platform</p>
+          <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Not just a proxy — a platform.</h2>
+        </header>
+
+        <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-px rounded-[2rem] overflow-hidden border border-white/10 bg-white/10">
+          <article class="bg-br-black p-7 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold mb-8">Services</p>
+            <h3 class="text-xl font-bold">Embedded services</h3>
+            <p class="mt-3 text-white/46 leading-7">Memory, cache, queue, scheduler and skills are embedded services — not external systems to wire up.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold mb-8">Context</p>
+            <h3 class="text-xl font-bold">Your knowledge, in context</h3>
+            <p class="mt-3 text-white/46 leading-7">Plug in documents, embeddings and indexes. The gateway injects the right context into the right model at the right time.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-amber font-semibold mb-8">Safety</p>
+            <h3 class="text-xl font-bold">Guardrails built in</h3>
+            <p class="mt-3 text-white/46 leading-7">PII redaction, prompt guards and per-team policy live at the edge — not in every tool's prompt.</p>
+          </article>
+          <article class="bg-br-black p-7 sm:p-8">
+            <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold mb-8">Engagement</p>
+            <h3 class="text-xl font-bold">Gamification</h3>
+            <p class="mt-3 text-white/46 leading-7">Surface provider health, savings and fallback wins to the team. Make routing decisions visible and rewarding.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ENTERPRISE ===================== -->
+    <section id="enterprise" class="py-24 sm:py-32 border-y border-white/10 bg-white/[.016]">
+      <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-[.82fr_1.18fr] gap-14 lg:gap-20 items-start">
+          <div class="fade">
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Enterprise</p>
+            <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">From developer router to company control layer.</h2>
+            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">The same gateway a single developer installs in 30 seconds becomes the AI routing layer for the whole company — with policy, audit and observability in place.</p>
+          </div>
+
+          <div class="grid gap-4">
+            <div class="hover-card panel rounded-[2rem] p-7 sm:p-8">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-blue font-semibold">Policy</p>
+              <h3 class="mt-3 text-2xl sm:text-3xl font-black tracking-[-.04em]">Policy-aware routing</h3>
+              <p class="mt-4 text-white/48 leading-7">Define allowed providers, model tiers and fallback behavior by team, tool or project. Enforced at the edge.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-mint font-semibold">Visibility</p>
+              <h3 class="mt-3 text-2xl sm:text-3xl font-black tracking-[-.04em]">Usage visibility</h3>
+              <p class="mt-4 text-white/46 leading-7">See which tools, agents and workflows are consuming AI budget through the gateway. Per-team, per-project, per-user.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-violet font-semibold">Integration</p>
+              <h3 class="mt-3 text-2xl sm:text-3xl font-black tracking-[-.04em]">TokenOptimizer integration</h3>
+              <p class="mt-4 text-white/46 leading-7">Gateway traffic feeds cost intelligence, audit reports and optimization dashboards inside TokenOptimizer. Same company, two products.</p>
+            </div>
+            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
+              <p class="text-[10px] uppercase tracking-[.24em] text-br-amber font-semibold">Operations</p>
+              <h3 class="mt-3 text-2xl sm:text-3xl font-black tracking-[-.04em]">Private forks &amp; enterprise builds</h3>
+              <p class="mt-4 text-white/46 leading-7">Private deployments, SSO, audit-grade logging, signed builds and dedicated support for teams that need more than self-host.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company facts -->
+        <div class="mt-20 grid lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Company</p>
+            <h3 class="text-3xl sm:text-5xl font-black tracking-[-.05em] leading-[1]">BlackRiver AI Ltd.</h3>
+            <p class="mt-6 text-lg text-white/50 leading-8 max-w-xl">A UK company created to build, own and operate AI products and infrastructure. The gateway is one of its products.</p>
+          </div>
+          <div class="glass rounded-[2rem] p-7 sm:p-9">
+            <div class="divide-y divide-white/10">
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Product</span><span class="font-semibold text-right">BlackRiver Gateway</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Operator</span><span class="font-semibold text-right">BlackRiver AI Ltd</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Company number</span><span class="font-semibold">17291854</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Jurisdiction</span><span class="font-semibold text-right">England &amp; Wales</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Base</span><span class="font-semibold text-right">London, United Kingdom</span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Sister product</span><span class="font-semibold text-right"><a href="tokenoptimizer.html" class="text-br-blue hover:text-white transition">TokenOptimizer</a></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT / CTA ===================== -->
+    <section id="contact" class="py-24 sm:py-32">
       <div class="mx-auto max-w-4xl px-5 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Contact</p><h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Build AI routing with BlackRiver AI.</h2><p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">Gateway deployment, provider routing, enterprise controls, private forks and integration with TokenOptimizer.</p>
+        <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Contact</p>
+        <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Build AI routing with BlackRiver AI.</h2>
+        <p class="mt-6 text-lg text-white/50 leading-8 max-w-2xl mx-auto">Gateway deployment, provider routing, enterprise controls, private forks and integration with TokenOptimizer.</p>
+
         <form id="contactForm" class="mt-10 grid gap-3 text-left max-w-2xl mx-auto">
-          <div class="grid sm:grid-cols-2 gap-3"><input id="name" required placeholder="Name" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" /><input id="email" type="email" required placeholder="Email" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" /></div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input id="name" required placeholder="Name" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
+            <input id="email" type="email" required placeholder="Email" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
+          </div>
           <input id="subjectInput" placeholder="Subject" value="BlackRiver Gateway inquiry" class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition" />
           <textarea id="message" rows="5" placeholder="Tell us about your tools, providers and routing needs..." class="rounded-2xl border border-white/10 bg-white/[.035] px-5 py-4 text-white placeholder-white/28 outline-none focus:border-br-blue focus:ring-2 focus:ring-br-blue/20 transition"></textarea>
           <button type="submit" class="button button-light rounded-2xl px-6 py-4 text-sm font-bold">Send inquiry</button>
         </form>
+
+        <div class="mt-16 panel rounded-[2rem] p-8 sm:p-10 text-left">
+          <p class="text-[10px] uppercase tracking-[.24em] text-white/34 font-semibold">A note on lineage</p>
+          <p class="mt-3 text-sm text-white/50 leading-7 max-w-3xl">BlackRiver Gateway is a BlackRiver AI product. The architecture, UX patterns and provider-fallback model draw from open-source AI router projects in the wider community. Original licenses, attribution and notices are preserved in the public repository and documentation.</p>
+        </div>
       </div>
     </section>
   </main>
+
   <footer class="relative z-10 border-t border-white/10">
     <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 py-10">
       <div class="flex flex-col md:flex-row justify-between gap-6">
-        <div><p class="font-semibold">BlackRiver Gateway</p><p class="mt-4 text-sm text-white/32 max-w-md">AI routing infrastructure for tools, agents and model providers.</p></div>
-        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/40"><a href="#routing" class="hover:text-white transition">Routing</a><a href="#tools" class="hover:text-white transition">Tools</a><a href="#architecture" class="hover:text-white transition">Architecture</a><a href="#enterprise" class="hover:text-white transition">Enterprise</a><a href="#contact" class="hover:text-white transition">Contact</a></div>
+        <div>
+          <div class="flex items-center gap-3">
+            <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)"/>
+              <path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/>
+            </svg>
+            <span class="font-semibold">BlackRiver Gateway</span>
+          </div>
+          <p class="mt-4 text-sm text-white/32 max-w-md">AI routing infrastructure for tools, agents and model providers.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/40">
+          <a href="#routing" class="hover:text-white transition">Routing</a>
+          <a href="#tools" class="hover:text-white transition">Tools</a>
+          <a href="#architecture" class="hover:text-white transition">Architecture</a>
+          <a href="#enterprise" class="hover:text-white transition">Enterprise</a>
+          <a href="#contact" class="hover:text-white transition">Contact</a>
+          <a href="index.html" class="hover:text-white transition">BlackRiver AI</a>
+          <a href="tokenoptimizer.html" class="hover:text-white transition">TokenOptimizer</a>
+        </div>
       </div>
-      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/26"><p>© 2026 BlackRiver AI Ltd. All rights reserved.</p><p>Company Number: 17291854 · London, United Kingdom</p></div>
+
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/26">
+        <p>© 2026 BlackRiver AI Ltd. All rights reserved.</p>
+        <p>Company Number: 17291854 · London, United Kingdom</p>
+      </div>
     </div>
   </footer>
+
   <script>
-    const nav=document.getElementById('nav');
-    window.addEventListener('scroll',()=>{if(window.scrollY>18)nav.classList.add('bg-black/20','backdrop-blur-xl');else nav.classList.remove('bg-black/20','backdrop-blur-xl')});
-    document.getElementById('contactForm').addEventListener('submit',event=>{event.preventDefault();const name=document.getElementById('name').value.trim();const email=document.getElementById('email').value.trim();const subjectValue=document.getElementById('subjectInput').value.trim()||'BlackRiver Gateway inquiry';const message=document.getElementById('message').value.trim();const subject=encodeURIComponent(subjectValue);const body=encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);window.location.href=`mailto:contact@blackriver.ai?subject=${subject}&body=${body}`;});
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 18) nav.classList.add('bg-black/20', 'backdrop-blur-xl');
+      else nav.classList.remove('bg-black/20', 'backdrop-blur-xl');
+    });
+
+    document.getElementById('contactForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subjectValue = document.getElementById('subjectInput').value.trim() || 'BlackRiver Gateway inquiry';
+      const message = document.getElementById('message').value.trim();
+      const subject = encodeURIComponent(subjectValue);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+      window.location.href = `mailto:contact@blackriver.ai?subject=${subject}&body=${body}`;
+    });
   </script>
 </body>
 </html>
