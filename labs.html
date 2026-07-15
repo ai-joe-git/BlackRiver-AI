@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackRiver Labs · On-device AI</title>
+  <meta name="description" content="BlackRiver Labs — private language, multimodal and image models running directly in your browser with WebGPU." />
+  <meta name="theme-color" content="#020306" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='7' y='7' width='50' height='50' rx='15' fill='none' stroke='%238DB4FF' stroke-width='3'/%3E%3Cpath d='M16 39.5C25 25 35.5 43 47 19.5' stroke='%23F7F9FC' stroke-width='4.6' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 28.5C25 14 36 32 47 8.5' stroke='%238DB4FF' stroke-width='3.1' stroke-linecap='round' fill='none' opacity='.8'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme:dark; --bg:#020306; --text:#f7f9fc; --muted:#98a2b3; --blue:#8db4ff; --cyan:#8df1ff; --mint:#58e6b1; --violet:#b8a2ff; --amber:#ffd166; --line:rgba(255,255,255,.11); }
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; background:var(--bg); color:var(--text); font-family:Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+    body { overflow-x:hidden; }
+    a { color:inherit; text-decoration:none; }
+    ::selection { background:rgba(141,180,255,.32); color:#fff; }
+    .field { position:fixed; inset:0; pointer-events:none; z-index:0; background:radial-gradient(circle at 50% -8%,rgba(141,180,255,.17),transparent 31%),radial-gradient(circle at 84% 48%,rgba(88,230,177,.065),transparent 25%),radial-gradient(circle at 8% 75%,rgba(184,162,255,.075),transparent 30%),linear-gradient(180deg,#020306,#060914 48%,#020306); }
+    .field::before { content:""; position:absolute; inset:0; opacity:.3; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size:82px 82px; mask-image:radial-gradient(circle at 50% 12%,#000,transparent 72%); }
+    .grain { position:fixed; inset:0; z-index:50; pointer-events:none; opacity:.026; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    .wrap { width:min(1180px,calc(100% - 40px)); margin:auto; }
+    header { position:fixed; top:0; left:0; right:0; z-index:40; }
+    .nav { height:64px; margin-top:18px; padding:0 18px; border:1px solid var(--line); border-radius:999px; background:rgba(2,3,6,.7); backdrop-filter:blur(24px); display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:11px; font-size:13px; font-weight:650; }
+    .brand svg { width:31px; height:31px; }
+    .nav-links { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,.58); }
+    .nav-links a { padding:9px 15px; border:1px solid transparent; border-radius:999px; transition:.2s ease; }
+    .nav-links a:hover { color:#fff; border-color:var(--line); background:rgba(255,255,255,.04); }
+    .nav-links .active { color:#fff; border-color:rgba(141,180,255,.3); background:rgba(141,180,255,.08); }
+    main { position:relative; z-index:2; }
+    .hero { min-height:82vh; padding:180px 0 90px; display:grid; align-items:center; }
+    .eyebrow { font-family:"Geist Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; color:var(--blue); }
+    h1 { margin:30px 0 0; max-width:1050px; font-size:clamp(64px,10vw,138px); line-height:.82; letter-spacing:-.075em; font-weight:650; }
+    h1 span { display:block; font-weight:250; color:transparent; background:linear-gradient(110deg,#fff 0%,var(--blue) 51%,var(--cyan) 100%); -webkit-background-clip:text; background-clip:text; }
+    .hero-bottom { margin-top:64px; padding-top:25px; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr auto; gap:50px; align-items:end; }
+    .hero-copy { max-width:650px; font-size:16px; line-height:1.75; color:rgba(255,255,255,.48); font-weight:350; }
+    .stats { display:flex; gap:42px; }
+    .stat strong { display:block; font-size:25px; letter-spacing:-.04em; }
+    .stat span { display:block; margin-top:7px; font-family:"Geist Mono",monospace; color:rgba(255,255,255,.32); font-size:8px; letter-spacing:.16em; text-transform:uppercase; }
+    .catalog { padding:60px 0 130px; }
+    .section-head { margin-bottom:32px; display:flex; align-items:end; justify-content:space-between; gap:30px; }
+    .section-head h2 { margin:0; font-size:clamp(38px,5vw,68px); line-height:.95; letter-spacing:-.055em; }
+    .section-head p { max-width:420px; margin:0; color:rgba(255,255,255,.42); line-height:1.65; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .lab { min-height:570px; border:1px solid var(--line); border-radius:32px; overflow:hidden; background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018)); display:flex; flex-direction:column; transition:transform .3s ease,border-color .3s ease,background .3s ease; }
+    .lab:hover { transform:translateY(-5px); border-color:rgba(255,255,255,.22); background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.024)); }
+    .visual { height:225px; position:relative; overflow:hidden; border-bottom:1px solid var(--line); background:#050811; }
+    .visual::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:34px 34px; mask-image:radial-gradient(circle,#000,transparent 75%); }
+    .visual::after { content:""; position:absolute; width:210px; height:210px; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50%; filter:blur(1px); }
+    .bonsai .visual::after { background:radial-gradient(circle,rgba(184,162,255,.38),rgba(184,162,255,.06) 46%,transparent 68%); box-shadow:0 0 0 1px rgba(184,162,255,.18),0 0 90px rgba(184,162,255,.15); }
+    .gemma .visual::after { border-radius:38% 62% 61% 39%/45% 42% 58% 55%; background:linear-gradient(135deg,rgba(141,180,255,.45),rgba(141,241,255,.12)); box-shadow:70px -25px 90px rgba(141,241,255,.13); transform:translate(-50%,-50%) rotate(18deg); }
+    .lfm .visual::after { width:250px; height:90px; border-radius:50%; border:1px solid rgba(88,230,177,.45); box-shadow:0 0 50px rgba(88,230,177,.18),inset 0 0 45px rgba(88,230,177,.08); transform:translate(-50%,-50%) rotate(-14deg); }
+    .image .visual::after { width:170px; height:170px; border-radius:28px; background:linear-gradient(135deg,rgba(255,209,102,.35),rgba(184,162,255,.22),rgba(141,241,255,.20)); box-shadow:0 0 80px rgba(255,209,102,.12); transform:translate(-50%,-50%) rotate(12deg); }
+    .visual-mark { position:absolute; inset:0; z-index:2; display:grid; place-items:center; font-family:"Geist Mono",monospace; font-size:10px; letter-spacing:.24em; color:rgba(255,255,255,.75); text-transform:uppercase; }
+    .body { flex:1; padding:30px; display:flex; flex-direction:column; }
+    .meta { display:flex; align-items:center; justify-content:space-between; gap:20px; font-family:"Geist Mono",monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.34); }
+    .dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:9px; box-shadow:0 0 18px currentColor; }
+    .bonsai .dot { color:var(--violet); background:var(--violet); } .gemma .dot { color:var(--cyan); background:var(--cyan); } .lfm .dot { color:var(--mint); background:var(--mint); } .image .dot { color:var(--amber); background:var(--amber); }
+    .body h3 { margin:24px 0 0; font-size:34px; letter-spacing:-.045em; }
+    .body p { margin:13px 0 0; color:rgba(255,255,255,.46); line-height:1.65; }
+    .body .attribution { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); color:rgba(255,255,255,.34); font-family:"Geist Mono",monospace; font-size:9px; line-height:1.75; letter-spacing:.05em; }
+    .body .implementation { display:block; margin-top:7px; color:rgba(141,180,255,.72); text-transform:uppercase; letter-spacing:.11em; }
+    .tags { margin-top:auto; padding-top:30px; display:flex; flex-wrap:wrap; gap:7px; }
+    .tags span { padding:7px 10px; border:1px solid var(--line); border-radius:999px; font-family:"Geist Mono",monospace; font-size:8px; letter-spacing:.13em; text-transform:uppercase; color:rgba(255,255,255,.39); }
+    .launch { margin-left:auto; color:rgba(255,255,255,.5); transition:.2s; }
+    .lab:hover .launch { color:#fff; transform:translateX(2px); }
+    .credits { padding:120px 0; border-top:1px solid var(--line); background:rgba(255,255,255,.012); }
+    .credits-head { display:grid; grid-template-columns:.8fr 1.2fr; gap:70px; margin-bottom:48px; }
+    .credits-head h2 { margin:0; font-size:clamp(44px,6vw,76px); line-height:.93; letter-spacing:-.06em; }
+    .credits-head p { margin:0; color:rgba(255,255,255,.48); font-size:16px; line-height:1.75; }
+    .credits-head strong { color:#fff; font-weight:600; }
+    .credit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .credit { padding:28px; border:1px solid var(--line); border-radius:24px; background:rgba(255,255,255,.022); }
+    .credit-label { font-family:"Geist Mono",monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--blue); }
+    .credit h3 { margin:15px 0 0; font-size:21px; letter-spacing:-.025em; }
+    .credit p { margin:12px 0 0; color:rgba(255,255,255,.43); line-height:1.7; font-size:14px; }
+    .credit a { color:rgba(255,255,255,.78); border-bottom:1px solid rgba(141,180,255,.32); transition:.2s ease; }
+    .credit a:hover { color:#fff; border-color:var(--cyan); }
+    .principles { padding:110px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.014); }
+    .principle-grid { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line); border-radius:28px; overflow:hidden; }
+    .principle { padding:34px; border-right:1px solid var(--line); }
+    .principle:last-child { border:0; }
+    .principle b { font-size:19px; }
+    .principle p { color:rgba(255,255,255,.4); line-height:1.65; margin:13px 0 0; font-size:14px; }
+    footer { position:relative; z-index:2; padding:42px 0; }
+    .foot { display:flex; align-items:center; justify-content:space-between; gap:25px; color:rgba(255,255,255,.3); font-size:12px; }
+    .foot a:hover { color:#fff; }
+    @media(max-width:800px){ .wrap{width:min(100% - 28px,650px)} .nav{margin-top:10px;height:56px}.nav-links a{padding:8px 10px}.nav-links .hide-sm{display:none}.hero{padding:150px 0 70px;min-height:auto}h1{font-size:clamp(58px,19vw,90px)}.hero-bottom{grid-template-columns:1fr}.stats{justify-content:space-between;gap:15px}.section-head{align-items:start;flex-direction:column}.grid,.credit-grid{grid-template-columns:1fr}.lab{min-height:540px}.credits-head{grid-template-columns:1fr;gap:25px}.principle-grid{grid-template-columns:1fr}.principle{border-right:0;border-bottom:1px solid var(--line)}.foot{align-items:flex-start;flex-direction:column} }
+  </style>
+</head>
+<body>
+  <div class="field"></div><div class="grain"></div>
+  <header><div class="wrap nav">
+    <a class="brand" href="index.html" aria-label="BlackRiver AI home">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)"/><path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/><path d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/></svg>
+      <span>BlackRiver AI</span>
+    </a>
+    <nav class="nav-links"><a class="active" href="labs.html">Labs</a><a class="hide-sm" href="index.html#portfolio">Portfolio</a><a href="index.html">Home</a></nav>
+  </div></header>
+  <main>
+    <section class="hero"><div class="wrap">
+      <p class="eyebrow">BlackRiver / Experimental systems</p>
+      <h1>Intelligence,<span>on your device.</span></h1>
+      <div class="hero-bottom">
+        <p class="hero-copy">A collection of experimental language, multimodal and image models that run locally through WebGPU. Your prompts, images and audio stay on your machine.</p>
+        <div class="stats"><div class="stat"><strong>04</strong><span>Live labs</span></div><div class="stat"><strong>100%</strong><span>On-device</span></div><div class="stat"><strong>0</strong><span>Server calls</span></div></div>
+      </div>
+    </div></section>
+    <section class="catalog"><div class="wrap">
+      <div class="section-head"><h2>Choose a system.</h2><p>Each lab is a working product surface, not a mockup. A WebGPU-capable browser and sufficient device memory are required.</p></div>
+      <div class="grid">
+        <a class="lab bonsai" href="bonsai-blackriver.html"><div class="visual"><span class="visual-mark">27B / 1-bit</span></div><div class="body"><div class="meta"><span><i class="dot"></i>Language model</span><span class="launch">Launch →</span></div><h3>Bonsai 27B</h3><p>Large-scale private reasoning with a dense 27-billion-parameter model compressed to 1-bit weights.</p><p class="attribution">Model and low-bit research: Prism ML · Base architecture: Qwen3.6-27B · Browser foundation: WebML Community.<span class="implementation">BlackRiver AI implementation: product interface, integration and deployment.</span></p><div class="tags"><span>Text</span><span>3.8 GB</span><span>WebGPU</span></div></div></a>
+        <a class="lab gemma" href="gemma-4-multimodal.html"><div class="visual"><span class="visual-mark">Vision / Audio / Text</span></div><div class="body"><div class="meta"><span><i class="dot"></i>Multimodal model</span><span class="launch">Launch →</span></div><h3>Gemma 4</h3><p>Understand images, transcribe audio and converse with a compact multimodal model entirely in your browser.</p><p class="attribution">Model: Google · Browser foundation: WebML Community and Hugging Face Transformers.js · WebGPU kernels: Fable 5.<span class="implementation">BlackRiver AI implementation: multimodal adaptation, interface and site integration.</span></p><div class="tags"><span>E2B / E4B</span><span>Vision</span><span>Audio</span></div></div></a>
+        <a class="lab lfm" href="lfm2-blackriver.html"><div class="visual"><span class="visual-mark">High-speed inference</span></div><div class="body"><div class="meta"><span><i class="dot"></i>Compact language model</span><span class="launch">Launch →</span></div><h3>LFM2.5 230M</h3><p>A compact Liquid AI language model tuned for extremely fast local generation and structured tasks.</p><p class="attribution">Model: Liquid AI · Browser foundation: WebML Community · Original kernel optimization credits: Fable 5 and Opus 4.8.<span class="implementation">BlackRiver AI implementation: product interface, navigation and deployment.</span></p><div class="tags"><span>230M</span><span>Text</span><span>Q4_0</span></div></div></a>
+        <a class="lab image" href="bonsai-image-blackriver.html"><div class="visual"><span class="visual-mark">Local diffusion</span></div><div class="body"><div class="meta"><span><i class="dot"></i>Image model</span><span class="launch">Launch →</span></div><h3>Bonsai Image</h3><p>Generate high-quality images locally with compressed 4B diffusion models and private prompts.</p><p class="attribution">Low-bit models: Prism ML · Base model: FLUX.2 Klein 4B by Black Forest Labs · Browser foundation: WebML Community.<span class="implementation">BlackRiver AI implementation: product interface, integration and deployment.</span></p><div class="tags"><span>4B</span><span>Image</span><span>Binary / Ternary</span></div></div></a>
+      </div>
+    </div></section>
+    <section class="credits"><div class="wrap">
+      <div class="credits-head"><h2>Credits,<br>clearly.</h2><p><strong>“BlackRiver AI implementation”</strong> describes the unified product interface, BlackRiver navigation, website integration, deployment packaging and selected workflow adaptations. It does not imply that BlackRiver AI trained the underlying models or created the original WebGPU research demos.</p></div>
+      <div class="credit-grid">
+        <article class="credit"><span class="credit-label">Bonsai 27B</span><h3>Prism ML · Qwen · WebML Community</h3><p><a href="https://huggingface.co/prism-ml/Bonsai-27B-gguf" target="_blank" rel="noopener">Prism ML</a> created the Bonsai 27B low-bit model, derived from Qwen3.6-27B. The original browser work is credited to <a href="https://huggingface.co/spaces/webml-community/bonsai-webgpu-kernels" target="_blank" rel="noopener">WebML Community</a>.</p></article>
+        <article class="credit"><span class="credit-label">Gemma 4 Multimodal</span><h3>Google · Hugging Face · Fable 5</h3><p><a href="https://huggingface.co/google/gemma-4-E2B" target="_blank" rel="noopener">Google</a> created Gemma 4. The browser foundation comes from <a href="https://huggingface.co/spaces/webml-community/gemma-4-webgpu-kernels" target="_blank" rel="noopener">WebML Community</a> and Hugging Face tooling; the original optimized WebGPU kernels are credited to Fable 5.</p></article>
+        <article class="credit"><span class="credit-label">LFM2.5 230M</span><h3>Liquid AI · WebML Community</h3><p><a href="https://huggingface.co/LiquidAI/LFM2.5-230M" target="_blank" rel="noopener">Liquid AI</a> created LFM2.5 230M. The original browser demo is credited to <a href="https://huggingface.co/spaces/webml-community/lfm2-webgpu-kernels" target="_blank" rel="noopener">WebML Community</a>, with kernel optimization credits retained from that project.</p></article>
+        <article class="credit"><span class="credit-label">Bonsai Image 4B</span><h3>Prism ML · Black Forest Labs · WebML Community</h3><p><a href="https://huggingface.co/collections/prism-ml/bonsai-image" target="_blank" rel="noopener">Prism ML</a> created the binary and ternary Bonsai Image variants from <a href="https://huggingface.co/black-forest-labs/FLUX.2-klein-4B" target="_blank" rel="noopener">FLUX.2 Klein 4B by Black Forest Labs</a>. The browser foundation is credited to <a href="https://huggingface.co/spaces/webml-community/bonsai-image-webgpu" target="_blank" rel="noopener">WebML Community</a>.</p></article>
+      </div>
+    </div></section>
+    <section class="principles"><div class="wrap"><div class="principle-grid">
+      <div class="principle"><b>Private by architecture.</b><p>Inference happens on your GPU. Content does not need to leave the browser.</p></div>
+      <div class="principle"><b>Real model weights.</b><p>Each experience loads and caches its own quantized model, with no simulated outputs.</p></div>
+      <div class="principle"><b>Built on WebGPU.</b><p>Modern browser compute turns local AI into a directly accessible product surface.</p></div>
+    </div></div></section>
+  </main>
+  <footer><div class="wrap foot"><span>© 2026 BlackRiver AI Ltd. · Experimental software</span><span><a href="index.html">Main site</a> · London, United Kingdom</span></div></footer>
+</body>
+</html>

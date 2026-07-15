@@ -152,6 +152,7 @@
         <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-white/52">
           <a href="#thesis" class="hover:text-white transition">Thesis</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
+          <a href="labs.html" class="hover:text-white transition">Labs</a>
           <a href="#operating-layer" class="hover:text-white transition">Infrastructure</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
@@ -171,11 +172,16 @@
       <div id="mobileMenu" class="hidden md:hidden mt-3 rounded-3xl border border-white/10 bg-black/82 p-3 backdrop-blur-2xl">
         <a href="#thesis" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Thesis</a>
         <a href="#portfolio" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Portfolio</a>
+        <a href="labs.html" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">On-device Labs</a>
         <a href="#operating-layer" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Infrastructure</a>
         <a href="#company" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Company</a>
         <a href="#contact" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/8">Contact</a>
         <a href="tokenoptimizer.html"  class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">TokenOptimizer</a>
         <a href="blackriver-gateway.html"  class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">BlackRiver Gateway</a>
+        <a href="bonsai-blackriver.html" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">Bonsai</a>
+        <a href="gemma-4-multimodal.html" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">Gemma 4 Multimodal</a>
+        <a href="lfm2-blackriver.html" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">LFM2.5 230M</a>
+        <a href="bonsai-image-blackriver.html" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-white/8">Bonsai Image</a>
       </div>
     </nav>
   </header>
@@ -308,6 +314,7 @@
           <div>
             <p class="text-xs uppercase tracking-[.34em] text-white/34 font-semibold mb-6">Portfolio</p>
             <h2 class="text-4xl sm:text-6xl font-black tracking-[-.055em] leading-[.96]">Products with their own surface area.</h2>
+            <a href="labs.html" class="mt-8 inline-flex items-center rounded-full border border-br-blue/30 bg-br-blue/10 px-5 py-3 text-sm font-semibold text-white hover:bg-br-blue/20 transition">Explore all Labs →</a>
           </div>
 
           <div class="grid gap-4">
@@ -333,17 +340,73 @@
               </div>
             </a>
 
-            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
-              <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Private</p>
-              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Automation systems</h3>
-              <p class="mt-4 text-white/46 leading-7">Software systems that turn repetitive internal work into controlled processes.</p>
-            </div>
+            <a id="labs" href="bonsai-blackriver.html" class="hover-card quiet rounded-[2rem] p-7 sm:p-8 block group scroll-mt-32">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <span class="h-2 w-2 rounded-full bg-br-violet shadow-[0_0_24px_rgba(184,162,255,.7)]"></span>
+                    <p class="text-xs uppercase tracking-[.24em] text-br-violet font-semibold">On-device lab</p>
+                  </div>
+                  <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Bonsai</h3>
+                  <p class="mt-4 max-w-2xl text-white/46 leading-7">A private local language-model workspace accelerated by WebGPU. Chat directly in the browser without sending prompts to a server.</p>
+                  <div class="mt-5 flex flex-wrap gap-2 text-[10px] uppercase tracking-[.18em] text-white/36">
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">Local LLM</span>
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">WebGPU</span>
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">Private</span>
+                  </div>
+                </div>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52 group-hover:border-br-violet/50 group-hover:text-white transition">Launch →</span>
+              </div>
+            </a>
 
-            <div class="hover-card quiet rounded-[2rem] p-7 sm:p-8">
-              <p class="text-xs uppercase tracking-[.24em] text-white/30 font-semibold">Research</p>
-              <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Agents, voice and local AI</h3>
-              <p class="mt-4 text-white/46 leading-7">Practical experiments around agent workflows, voice interfaces and local model infrastructure.</p>
-            </div>
+            <a href="gemma-4-multimodal.html" class="hover-card quiet rounded-[2rem] p-7 sm:p-8 block group">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <span class="h-2 w-2 rounded-full bg-br-cyan shadow-[0_0_24px_rgba(141,241,255,.7)]"></span>
+                    <p class="text-xs uppercase tracking-[.24em] text-br-cyan font-semibold">Multimodal lab</p>
+                  </div>
+                  <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Gemma 4 Multimodal</h3>
+                  <p class="mt-4 max-w-2xl text-white/46 leading-7">Private multimodal intelligence for text, images and audio, running entirely on your device with WebGPU.</p>
+                  <div class="mt-5 flex flex-wrap gap-2 text-[10px] uppercase tracking-[.18em] text-white/36">
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">Vision</span>
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">Audio</span>
+                    <span class="rounded-full border border-white/10 px-3 py-1.5">Text</span>
+                  </div>
+                </div>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52 group-hover:border-br-cyan/50 group-hover:text-white transition">Launch →</span>
+              </div>
+            </a>
+
+            <a href="lfm2-blackriver.html" class="hover-card quiet rounded-[2rem] p-7 sm:p-8 block group">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <span class="h-2 w-2 rounded-full bg-br-mint shadow-[0_0_24px_rgba(88,230,177,.7)]"></span>
+                    <p class="text-xs uppercase tracking-[.24em] text-br-mint font-semibold">High-speed language lab</p>
+                  </div>
+                  <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">LFM2.5 230M</h3>
+                  <p class="mt-4 max-w-2xl text-white/46 leading-7">A compact Liquid AI language model built for extremely fast private inference and structured tasks in the browser.</p>
+                  <div class="mt-5 flex flex-wrap gap-2 text-[10px] uppercase tracking-[.18em] text-white/36"><span class="rounded-full border border-white/10 px-3 py-1.5">230M</span><span class="rounded-full border border-white/10 px-3 py-1.5">Text</span><span class="rounded-full border border-white/10 px-3 py-1.5">Q4_0</span></div>
+                </div>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52 group-hover:border-br-mint/50 group-hover:text-white transition">Launch →</span>
+              </div>
+            </a>
+
+            <a href="bonsai-image-blackriver.html" class="hover-card quiet rounded-[2rem] p-7 sm:p-8 block group">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <span class="h-2 w-2 rounded-full bg-br-amber shadow-[0_0_24px_rgba(255,209,102,.65)]"></span>
+                    <p class="text-xs uppercase tracking-[.24em] text-br-amber font-semibold">Local image lab</p>
+                  </div>
+                  <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-[-.04em]">Bonsai Image 4B</h3>
+                  <p class="mt-4 max-w-2xl text-white/46 leading-7">Private image generation with compressed binary and ternary diffusion models running locally through WebGPU.</p>
+                  <div class="mt-5 flex flex-wrap gap-2 text-[10px] uppercase tracking-[.18em] text-white/36"><span class="rounded-full border border-white/10 px-3 py-1.5">Image</span><span class="rounded-full border border-white/10 px-3 py-1.5">4B</span><span class="rounded-full border border-white/10 px-3 py-1.5">Local diffusion</span></div>
+                </div>
+                <span class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm text-white/52 group-hover:border-br-amber/50 group-hover:text-white transition">Launch →</span>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -359,7 +422,7 @@
             </div>
             <div class="text-lg sm:text-xl leading-9 text-white/56 font-light">
               <p>The most valuable AI systems usually do not look loud. They route traffic, expose hidden costs, reduce waste and make operations more predictable.</p>
-              <p class="mt-6">BlackRiver Gateway powers the routing layer. TokenOptimizer turns usage into cost intelligence.</p>
+              <p class="mt-6">BlackRiver Gateway powers the routing layer. TokenOptimizer turns usage into cost intelligence. BlackRiver Labs explores private language, multimodal and image inference on-device.</p>
             </div>
           </div>
 
@@ -388,7 +451,7 @@
               <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Company number</span><span class="font-semibold">17291854</span></div>
               <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Jurisdiction</span><span class="font-semibold text-right">England & Wales</span></div>
               <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Base</span><span class="font-semibold text-right">London, United Kingdom</span></div>
-              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Public assets</span><span class="font-semibold text-right"><a href="tokenoptimizer.html"  class="text-br-blue hover:text-white transition">TokenOptimizer</a> · <a href="blackriver-gateway.html"  class="text-br-blue hover:text-white transition">Gateway</a></span></div>
+              <div class="flex items-center justify-between py-4 gap-6"><span class="text-white/38">Public assets</span><span class="font-semibold text-right"><a href="tokenoptimizer.html" class="text-br-blue hover:text-white transition">TokenOptimizer</a> · <a href="blackriver-gateway.html" class="text-br-blue hover:text-white transition">Gateway</a> · <a href="labs.html" class="text-br-cyan hover:text-white transition">BlackRiver Labs</a></span></div>
             </div>
           </div>
         </div>
@@ -432,11 +495,16 @@
         <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/40">
           <a href="#thesis" class="hover:text-white transition">Thesis</a>
           <a href="#portfolio" class="hover:text-white transition">Portfolio</a>
+          <a href="labs.html" class="hover:text-white transition">Labs</a>
           <a href="#operating-layer" class="hover:text-white transition">Infrastructure</a>
           <a href="#company" class="hover:text-white transition">Company</a>
           <a href="#contact" class="hover:text-white transition">Contact</a>
           <a href="tokenoptimizer.html"  class="hover:text-white transition">TokenOptimizer</a>
           <a href="blackriver-gateway.html"  class="hover:text-white transition">Gateway</a>
+          <a href="bonsai-blackriver.html" class="hover:text-white transition">Bonsai</a>
+          <a href="gemma-4-multimodal.html" class="hover:text-white transition">Gemma 4</a>
+          <a href="lfm2-blackriver.html" class="hover:text-white transition">LFM2.5</a>
+          <a href="bonsai-image-blackriver.html" class="hover:text-white transition">Bonsai Image</a>
         </div>
       </div>
 
@@ -509,6 +577,30 @@
         "@type": "Brand",
         "name": "BlackRiver Gateway",
         "url": "blackriver-gateway.html"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Bonsai",
+        "applicationCategory": "DeveloperApplication",
+        "url": "bonsai-blackriver.html"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Gemma 4 Multimodal",
+        "applicationCategory": "MultimediaApplication",
+        "url": "gemma-4-multimodal.html"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "LFM2.5 230M",
+        "applicationCategory": "DeveloperApplication",
+        "url": "lfm2-blackriver.html"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Bonsai Image 4B",
+        "applicationCategory": "MultimediaApplication",
+        "url": "bonsai-image-blackriver.html"
       }
     ]
   }
