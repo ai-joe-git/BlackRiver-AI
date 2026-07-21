@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OmniVoice Studio — BlackRiver Labs</title>
+<meta name="description" content="OmniVoice by BlackRiver AI — private multilingual text-to-speech, voice cloning and automatic transcription running locally in your browser with WebGPU.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='7' y='7' width='50' height='50' rx='15' fill='none' stroke='%238DB4FF' stroke-width='3'/%3E%3Cpath d='M16 39.5C25 25 35.5 43 47 19.5' stroke='%23F7F9FC' stroke-width='4.6' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 28.5C25 14 36 32 47 8.5' stroke='%238DB4FF' stroke-width='3.1' stroke-linecap='round' fill='none' opacity='.8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sans:"Inter","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+  --bg:#030407;--surface:#090b10;--surface-2:#0d1017;--surface-3:#11151e;
+  --text:#f5f7fb;--muted:#8e98aa;--muted-2:#626d7e;
+  --blue:#8db4ff;--blue-2:#a9c8ff;--cyan:#8df1ff;--mint:#58e6b1;--red:#ff6b6b;
+  --border:rgba(255,255,255,.085);--border-strong:rgba(255,255,255,.14);
+  --shadow:0 26px 90px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{min-height:100%}
+body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit}
+textarea,input{user-select:text;-webkit-user-select:text}
+button,a{ -webkit-tap-highlight-color:transparent }
+a{color:inherit;text-decoration:none}
+#sceneA{position:fixed;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.2s ease;z-index:0}
+body.ready #sceneA{opacity:.7}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 70% 55% at 50% 18%,rgba(54,83,135,.11),transparent 66%),linear-gradient(to bottom,rgba(3,4,7,.18),rgba(3,4,7,.76) 80%,#030407)}
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:2;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 10s steps(5) infinite}
+@keyframes grain{0%{transform:translate(0)}25%{transform:translate(-1.5%,1%)}50%{transform:translate(1%,-1.5%)}75%{transform:translate(1.5%,1%)}100%{transform:translate(0)}}
+@keyframes pulse{0%,100%{opacity:.42;transform:scale(.9)}50%{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ui{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:72px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 34px;border-bottom:1px solid rgba(255,255,255,.055);background:rgba(3,4,7,.58);backdrop-filter:blur(18px);position:sticky;top:0;z-index:30}
+.brand{display:inline-flex;align-items:center;gap:11px;width:max-content;font-size:14px;font-weight:700;letter-spacing:.01em}
+.logo-mark{width:29px;height:29px;display:block}.logo-mark svg{width:100%;height:100%}
+.breadcrumb{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.breadcrumb a{transition:color .2s}.breadcrumb a:hover{color:var(--text)}.breadcrumb .slash{color:#3e4653}.breadcrumb .current{color:var(--blue)}
+.status-pill{justify-self:end;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.025)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--muted-2);transition:.3s}
+.status-dot.ready{background:var(--mint);box-shadow:0 0 12px rgba(88,230,177,.35)}
+.status-dot.loading{background:var(--cyan);animation:pulse 1.1s ease-in-out infinite}.status-dot.error{background:var(--red)}
+.status-text{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+main{width:min(1080px,calc(100% - 40px));margin:0 auto;padding:74px 0 72px;display:flex;flex-direction:column;gap:30px}
+.hero{text-align:left;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:38px;align-items:end;padding:0 4px 8px}
+.hero-copy{max-width:720px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);margin-bottom:18px}
+.hero h1{font-size:clamp(40px,6vw,70px);line-height:.98;letter-spacing:-.055em;margin:0;font-weight:750;max-width:820px}
+.hero h1 .thin{font-weight:300;color:#8691a2}.hero p{max-width:690px;color:var(--muted);font-size:15px;line-height:1.75;margin:22px 0 0}
+.hero-side{display:grid;gap:9px;min-width:190px}.hero-stat{padding:13px 15px;border-left:1px solid var(--border-strong);background:linear-gradient(90deg,rgba(141,180,255,.055),transparent)}
+.hero-stat b{display:block;font-size:12px;letter-spacing:.04em}.hero-stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.workspace{border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,rgba(16,19,27,.94),rgba(7,9,14,.94));box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(24px)}
+.workspace-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 22px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.018)}
+.workspace-title{display:flex;align-items:center;gap:11px}.workspace-icon{width:32px;height:32px;border:1px solid rgba(141,180,255,.25);border-radius:10px;display:grid;place-items:center;background:rgba(141,180,255,.07);color:var(--blue)}
+.workspace-title strong{display:block;font-size:13px}.workspace-title span{display:block;font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.03em}
+.model-stack{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.model-chip{display:flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.018)}
+.model-chip::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--muted-2)}.model-chip.loading::before{background:var(--cyan);animation:pulse 1s infinite}.model-chip.ready{color:#a9b5c7}.model-chip.ready::before{background:var(--mint)}.model-chip.error::before{background:var(--red)}
+.input-panel{padding:25px 26px 23px}.text-wrap{position:relative}.text-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--muted)}
+.text-label span:last-child{font-family:var(--mono);font-weight:500;color:var(--muted-2)}
+.input-panel textarea{width:100%;min-height:150px;max-height:330px;resize:vertical;border:0;outline:0;border-radius:14px;padding:17px 18px;background:rgba(0,0,0,.23);box-shadow:inset 0 0 0 1px var(--border);color:var(--text);font-size:17px;line-height:1.65;transition:box-shadow .2s,background .2s}
+.input-panel textarea:focus{background:rgba(0,0,0,.3);box-shadow:inset 0 0 0 1px rgba(141,180,255,.48),0 0 0 3px rgba(141,180,255,.055)}.input-panel textarea::placeholder{color:#606979}.input-panel textarea:disabled{opacity:.45}
+.voice-section{margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}.voice-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.voice-section-title{font-size:10px;font-weight:700;letter-spacing:.11em;color:var(--muted);text-transform:uppercase}
+.voice-mode-toggle{display:flex;gap:2px;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:10px;padding:3px}.voice-mode-btn{padding:8px 15px;border-radius:7px;font-size:10px;font-weight:750;letter-spacing:.065em;cursor:pointer;border:0;background:transparent;color:var(--muted);transition:.2s}.voice-mode-btn.active{background:var(--blue);color:#07101f;box-shadow:0 4px 18px rgba(141,180,255,.18)}.voice-mode-btn:hover:not(.active){color:var(--text)}
+.voice-clone-area{display:none;grid-template-columns:minmax(220px,.8fr) minmax(250px,1.2fr);gap:12px;align-items:stretch}.voice-clone-area.visible{display:grid}.voice-file-upload{position:relative}.voice-file-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}.voice-file-label{height:48px;display:flex;align-items:center;gap:9px;padding:0 14px;border:1px dashed var(--border-strong);border-radius:11px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.2s;background:rgba(255,255,255,.018)}.voice-file-label:hover{border-color:rgba(141,180,255,.5);color:var(--text)}.voice-file-label.has-file{border-style:solid;border-color:rgba(88,230,177,.55);color:var(--mint);background:rgba(88,230,177,.035)}
+.voice-ref-text input{height:48px;width:100%;background:rgba(0,0,0,.23);border:1px solid var(--border);border-radius:11px;padding:0 14px;color:var(--text);font-size:12px;outline:0;transition:.2s}.voice-ref-text input:focus{border-color:rgba(141,180,255,.55)}.voice-ref-text input::placeholder{color:#616b7b}.voice-ref-text input:disabled{opacity:.5}.voice-info{font-size:10px;color:var(--muted);margin-top:10px;display:none;line-height:1.55}.voice-info.visible{display:block}
+.controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}.control-group{display:flex;align-items:center;gap:9px}.control-group label{font-size:9px;font-weight:750;letter-spacing:.11em;color:var(--muted);text-transform:uppercase;white-space:nowrap}.control-group input[type=range]{-webkit-appearance:none;appearance:none;width:104px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;outline:0}.control-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--blue);cursor:pointer;border:3px solid #10141d;box-shadow:0 0 0 1px rgba(141,180,255,.3)}.control-group .val{font-size:11px;font-weight:650;color:var(--text);min-width:32px;text-align:center;font-variant-numeric:tabular-nums}.control-spacer{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:10px;font-size:11px;font-weight:780;letter-spacing:.065em;cursor:pointer;transition:.2s;border:1px solid transparent;text-transform:uppercase}.btn-primary{background:var(--blue);color:#07101f;box-shadow:0 8px 28px rgba(141,180,255,.15)}.btn-primary:hover:not(:disabled){background:var(--blue-2);transform:translateY(-1px)}.btn-primary:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}.btn-ghost{background:rgba(255,255,255,.025);color:var(--text);border-color:var(--border)}.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.065)}.btn-stop{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.25);color:#ff9b9b}.btn-stop:hover{background:rgba(255,107,107,.2)}
+.generating-indicator{display:none;margin-top:17px;padding:15px 16px;border-radius:13px;background:rgba(141,180,255,.055);border:1px solid rgba(141,180,255,.14)}.generating-indicator.visible{display:block}.run-head,.run-meta{display:flex;align-items:center;justify-content:space-between;gap:14px}.run-title{display:flex;align-items:center;gap:9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.025em}.gen-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);animation:pulse 1s ease-in-out infinite}.gen-step{font-family:var(--mono);font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}.run-progress{height:4px;margin:12px 0 9px;border-radius:999px;background:rgba(255,255,255,.075);overflow:hidden}.run-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:inherit;transition:width .28s ease}.run-meta{font-size:9px;color:var(--muted);letter-spacing:.04em}.run-meta span:last-child{text-align:right;font-family:var(--mono)}
+.output-panel{padding:16px 20px;border-top:1px solid var(--border);display:none;align-items:center;gap:15px;background:rgba(0,0,0,.12)}.output-panel.visible{display:flex}.output-panel audio{flex:1;height:42px;outline:0;min-width:0}.output-panel audio::-webkit-media-controls-panel{background:#edf0f5}
+.progress-overlay{position:fixed;inset:0;z-index:100;background:rgba(3,4,7,.96);display:grid;place-items:center;backdrop-filter:blur(18px);transition:opacity .4s}.progress-overlay.hidden{opacity:0;pointer-events:none}.progress-content{width:min(560px,calc(100% - 36px));padding:30px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,rgba(14,17,24,.96),rgba(7,9,14,.96));box-shadow:var(--shadow);text-align:left}.progress-brand{font-size:9px;font-weight:750;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}.progress-heading{font-size:24px;letter-spacing:-.035em;margin:9px 0 3px}.progress-sub{font-size:11px;color:var(--muted);line-height:1.55}.progress-main{display:flex;align-items:end;justify-content:space-between;margin-top:21px}.progress-pct{font-size:42px;font-weight:800;letter-spacing:-.05em;font-variant-numeric:tabular-nums}.progress-pct .sym{font-size:18px;color:var(--muted);margin-left:2px}.progress-status{font-size:10px;font-weight:750;letter-spacing:.09em;color:var(--muted);text-transform:uppercase;text-align:right}.progress-bar-wrap{height:4px;background:rgba(255,255,255,.075);border-radius:99px;margin-top:10px;overflow:hidden}.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:inherit;transition:width .3s;width:0}.progress-stats{font-size:10px;color:var(--muted);margin-top:8px;min-height:16px}.load-stages{display:grid;gap:6px;margin-top:20px}.load-stage{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:10px;padding:9px 10px;border:1px solid rgba(255,255,255,.055);border-radius:10px;background:rgba(255,255,255,.015)}.load-stage-icon{width:16px;height:16px;border-radius:50%;border:1px solid var(--border-strong);display:grid;place-items:center;font-size:8px;color:var(--muted)}.load-stage.loading .load-stage-icon{border-top-color:var(--cyan);animation:spin .8s linear infinite;color:transparent}.load-stage.ready .load-stage-icon{border-color:rgba(88,230,177,.35);background:rgba(88,230,177,.08);color:var(--mint)}.load-stage.error .load-stage-icon{border-color:rgba(255,107,107,.35);color:var(--red)}.load-stage-name{font-size:10px;font-weight:650}.load-stage-detail{font-size:9px;color:var(--muted);text-align:right}.progress-error{color:var(--red);font-size:11px;margin-top:13px;display:none;line-height:1.5}.progress-error.visible{display:block}.progress-retry{margin-top:15px}
+footer{text-align:center;padding:0 20px 24px;color:var(--muted-2);font-size:9px;letter-spacing:.06em;text-transform:uppercase}
+@media(max-width:760px){.topbar{grid-template-columns:1fr auto;padding:0 17px}.breadcrumb{display:none}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,1fr);min-width:0}.hero-stat{padding:10px}.workspace-head{align-items:flex-start;flex-direction:column}.model-stack{justify-content:flex-start}.voice-clone-area{grid-template-columns:1fr}.controls{align-items:flex-start}.control-spacer{display:none}.btn{flex:1}.output-panel{flex-direction:column}.output-panel audio{width:100%}}
+@media(max-width:520px){main{width:min(100% - 24px,1080px);padding:46px 0}.hero h1{font-size:42px}.hero-side{display:none}.input-panel{padding:18px 15px}.workspace-head{padding:15px}.controls{display:grid;grid-template-columns:1fr 1fr}.control-group{justify-content:space-between}.control-group input[type=range]{width:86px}.controls .btn{grid-column:1/-1;width:100%}.progress-content{padding:22px 18px}}
+</style>
+</head>
+<body>
+<canvas id="sceneA" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div class="ui">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="BlackRiver AI home">
+      <span class="logo-mark"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="7" y="7" width="50" height="50" rx="15" stroke="rgba(255,255,255,.18)"/><path d="M16 39.5C25 25 35.5 43 47 19.5" stroke="#F7F9FC" stroke-width="4.6" stroke-linecap="round"/><path d="M16 28.5C25 14 36 32 47 8.5" stroke="#8DB4FF" stroke-width="3.1" stroke-linecap="round" opacity=".8"/></svg></span>
+      BlackRiver AI
+    </a>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/labs.html">Labs</a><span class="slash">/</span><span class="current">OmniVoice</span></nav>
+    <div class="status-pill"><span class="status-dot" id="statusDot"></span><span class="status-text" id="statusText">INITIALIZING</span></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">BlackRiver Labs · Local voice</div>
+        <h1>Private voice synthesis, <span class="thin">inside your browser.</span></h1>
+        <p>Multilingual text-to-speech, zero-shot voice cloning and automatic Parakeet transcription. The complete stack is prepared at launch; text, voice and inference remain on this device.</p>
+      </div>
+      <div class="hero-side" aria-label="Project properties">
+        <div class="hero-stat"><b>WebGPU</b><span>Local inference</span></div>
+        <div class="hero-stat"><b>Parakeet</b><span>Auto transcript</span></div>
+        <div class="hero-stat"><b>No limit</b><span>Auto chunking</span></div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="workspace-head">
+        <div class="workspace-title">
+          <div class="workspace-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h2l2-7 4 14 3-10 2 3h3"/></svg></div>
+          <div><strong>OmniVoice Studio</strong><span>Complete local model stack</span></div>
+        </div>
+        <div class="model-stack" aria-label="Model status">
+          <span class="model-chip" id="modelCoreState">Core</span>
+          <span class="model-chip" id="modelDecoderState">Decoder</span>
+          <span class="model-chip" id="modelEncoderState">Voice encoder</span>
+          <span class="model-chip" id="modelAsrState">Parakeet ASR</span>
+        </div>
+      </div>
+
+      <div class="input-panel">
+        <div class="text-wrap">
+          <div class="text-label"><span>Script</span><span id="textCounter">0 characters</span></div>
+          <textarea id="textInput" placeholder="Write or paste the text to synthesize…" disabled rows="4"></textarea>
+        </div>
+
+        <div class="voice-section">
+          <div class="voice-section-header">
+            <span class="voice-section-title">Voice source</span>
+            <div class="voice-mode-toggle" id="voiceModeToggle">
+              <button class="voice-mode-btn active" data-mode="auto">AUTO VOICE</button>
+              <button class="voice-mode-btn" data-mode="clone">CLONE VOICE</button>
+            </div>
+          </div>
+          <div class="voice-clone-area" id="voiceCloneArea">
+            <div class="voice-file-upload">
+              <input type="file" id="refAudioInput" accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a" disabled>
+              <div class="voice-file-label" id="refAudioLabel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span id="refAudioName">Choose reference audio</span></div>
+            </div>
+            <div class="voice-ref-text"><input type="text" id="refTextInput" placeholder="Parakeet transcript appears here automatically" disabled></div>
+          </div>
+          <div class="voice-info" id="voiceInfo"></div>
+        </div>
+
+        <div class="controls">
+          <div class="control-group"><label>Quality</label><input type="range" id="stepsSlider" min="8" max="32" value="20" disabled><span class="val" id="stepsVal">20</span></div>
+          <div class="control-group"><label>Speed</label><input type="range" id="speedSlider" min="50" max="200" value="100" disabled><span class="val" id="speedVal">1.0x</span></div>
+          <div class="control-group"><label>Length</label><span class="val" id="lengthMode" style="min-width:104px;text-align:left;color:var(--blue)">AUTO · UNLIMITED</span></div>
+          <div class="control-spacer"></div>
+          <button class="btn btn-primary" id="generateBtn" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="6 4 20 12 6 20 6 4"/></svg>Generate</button>
+          <button class="btn btn-stop" id="stopBtn" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Stop</button>
+        </div>
+
+        <div class="generating-indicator" id="genIndicator">
+          <div class="run-head"><div class="run-title"><span class="gen-dot"></span><span id="genStatus">Preparing generation…</span></div><span class="gen-step" id="genStep"></span></div>
+          <div class="run-progress"><div class="run-progress-fill" id="runProgressFill"></div></div>
+          <div class="run-meta"><span id="runChunk">Planning chunks…</span><span id="runEta">ETA calculating…</span></div>
+        </div>
+      </div>
+
+      <div class="output-panel" id="outputPanel"><audio id="audioPlayer" controls></audio><button class="btn btn-ghost" id="downloadBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download WAV</button></div>
+    </section>
+  </main>
+  <footer>BlackRiver AI · Local voice lab · Models delivered from Hugging Face</footer>
+</div>
+
+<div class="progress-overlay" id="progressOverlay">
+  <div class="progress-content">
+    <div class="progress-brand">BlackRiver Labs · OmniVoice</div>
+    <h2 class="progress-heading">Preparing the local voice stack</h2>
+    <div class="progress-sub">Everything is downloaded and initialized now, so selecting a voice and generating later will not trigger surprise model downloads.</div>
+    <div class="progress-main"><div class="progress-pct"><span id="progressPct">0</span><span class="sym">%</span></div><div class="progress-status" id="progressStatus">Checking WebGPU</div></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-stats" id="progressStats">Models download directly from Hugging Face</div>
+    <div class="load-stages">
+      <div class="load-stage" id="loadStageCore"><span class="load-stage-icon">1</span><span class="load-stage-name">OmniVoice core</span><span class="load-stage-detail">2.3 GB · WebGPU</span></div>
+      <div class="load-stage" id="loadStageDecoder"><span class="load-stage-icon">2</span><span class="load-stage-name">Audio decoder</span><span class="load-stage-detail">86 MB</span></div>
+      <div class="load-stage" id="loadStageEncoder"><span class="load-stage-icon">3</span><span class="load-stage-name">Voice encoder</span><span class="load-stage-detail">654 MB</span></div>
+      <div class="load-stage" id="loadStageAsr"><span class="load-stage-icon">4</span><span class="load-stage-name">Parakeet ASR</span><span class="load-stage-detail">Multilingual · INT8</span></div>
+    </div>
+    <div class="progress-error" id="progressError"></div><button class="btn btn-primary progress-retry" id="retryBtn" style="display:none">Retry</button>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "onnxruntime-web": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.27.0/dist/ort.all.min.mjs"
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.27.0/dist/ort.webgpu.min.js"></script>
+<script type="module">
+import { AutoTokenizer } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0";
+import { configureOrtWeb, loadHuggingfaceModel } from "https://cdn.jsdelivr.net/npm/onnx-asr-web@0.1.3/dist/browser.js";
+
+const ort = globalThis.ort;
+const THREE = globalThis.THREE;
+
+// ============================================================
+// THREE.JS BACKGROUND
+// ============================================================
+(function initBackground() {
+  const canvas = document.getElementById('sceneA');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 2.5, 8);
+  camera.lookAt(0, 0, 0);
+
+  const gridMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) } },
+    vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `varying vec2 vP; uniform float uTime; void main(){ vec2 g = abs(fract(vP/2.2)-0.5); float lx = smoothstep(0.487,0.5,g.x); float ly = smoothstep(0.487,0.5,g.y); float l = max(lx,ly); float d = length(vP); float fade = smoothstep(12.0,3.0,d); gl_FragColor = vec4(0.553,0.706,1.0,l*0.12*fade); }`,
+    transparent: true, depthWrite: false
+  });
+  const grid = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), gridMat);
+  grid.rotation.x = -Math.PI / 2;
+  grid.position.y = -2.5;
+  scene.add(grid);
+
+  const particlesGeo = new THREE.BufferGeometry();
+  const count = 400;
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+  }
+  particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particlesMat = new THREE.PointsMaterial({ color: 0x8DB4FF, size: 0.025, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  const particles = new THREE.Points(particlesGeo, particlesMat);
+  scene.add(particles);
+
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.003;
+    gridMat.uniforms.uTime.value = time;
+    particles.rotation.y += 0.0004;
+    particles.rotation.x += 0.0002;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    gridMat.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+  });
+
+  setTimeout(() => document.body.classList.add('ready'), 200);
+})();
+
+// ============================================================
+// OMNIVOICE BROWSER PIPELINE
+// Browser/WebGPU export + inference algorithm from the VocoLoco implementation.
+// All model files are downloaded directly from Hugging Face.
+// ============================================================
+const HF_REPO = 'Gigsu/vocoloco-onnx';
+const HF_REVISION = '0cf41e88c9b3c594babf64a6dd613196c98b4900';
+const HF_BASE = `https://huggingface.co/${HF_REPO}/resolve/${HF_REVISION}/`;
+const ORT_CDN = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.27.0/dist/';
+const MAIN_GRAPH = 'omnivoice-main-split.onnx';
+const MAIN_SHARDS = [
+  'omnivoice-main.onnx_data_00',
+  'omnivoice-main.onnx_data_01',
+  'omnivoice-main.onnx_data_02',
+  'omnivoice-main.onnx_data_03',
+  'omnivoice-main.onnx_data_04',
+];
+const DECODER_MODEL = 'omnivoice-decoder.onnx';
+const ENCODER_MODEL = 'omnivoice-encoder-fixed.onnx';
+
+// Multilingual automatic reference transcription. All ASR weights are loaded at
+// application startup so selecting a reference never triggers another download.
+const PARAKEET_REPO = 'Olicorne/parakeet-tdt-0.6b-v3-smoothquant-onnx';
+const PARAKEET_REVISION = 'main';
+const PARAKEET_LABEL = 'Parakeet TDT 0.6B v3';
+
+const DEFAULT_CONFIG = Object.freeze({
+  audio_vocab_size: 1025,
+  audio_mask_id: 1024,
+  num_audio_codebook: 8,
+  audio_codebook_weights: [8, 8, 6, 6, 4, 4, 2, 2],
+  sampling_rate: 24000,
+  frame_rate: 75,
+});
+const CODEC_HOP_LENGTH = 960;
+const TOKENS_PER_SECOND = DEFAULT_CONFIG.sampling_rate / CODEC_HOP_LENGTH; // 25 codec frames/s
+
+const $ = (id) => document.getElementById(id);
+const statusDot = $('statusDot');
+const statusText = $('statusText');
+const textInput = $('textInput');
+const stepsSlider = $('stepsSlider');
+const stepsVal = $('stepsVal');
+const lengthMode = $('lengthMode');
+const speedSlider = $('speedSlider');
+const speedVal = $('speedVal');
+const generateBtn = $('generateBtn');
+const stopBtn = $('stopBtn');
+const genIndicator = $('genIndicator');
+const genStatus = $('genStatus');
+const genStep = $('genStep');
+const outputPanel = $('outputPanel');
+const audioPlayer = $('audioPlayer');
+const downloadBtn = $('downloadBtn');
+const progressOverlay = $('progressOverlay');
+const progressPct = $('progressPct');
+const progressStatus = $('progressStatus');
+const progressBar = $('progressBar');
+const progressStats = $('progressStats');
+const progressError = $('progressError');
+const retryBtn = $('retryBtn');
+const voiceModeToggle = $('voiceModeToggle');
+const voiceCloneArea = $('voiceCloneArea');
+const refAudioInput = $('refAudioInput');
+const refAudioLabel = $('refAudioLabel');
+const refAudioName = $('refAudioName');
+const refTextInput = $('refTextInput');
+const voiceInfo = $('voiceInfo');
+const textCounter = $('textCounter');
+const runProgressFill = $('runProgressFill');
+const runChunk = $('runChunk');
+const runEta = $('runEta');
+const modelCoreState = $('modelCoreState');
+const modelDecoderState = $('modelDecoderState');
+const modelEncoderState = $('modelEncoderState');
+const modelAsrState = $('modelAsrState');
+const loadStageCore = $('loadStageCore');
+const loadStageDecoder = $('loadStageDecoder');
+const loadStageEncoder = $('loadStageEncoder');
+const loadStageAsr = $('loadStageAsr');
+
+let mainSession = null;
+let decoderSession = null;
+let encoderSession = null;
+let tokenizer = null;
+let config = { ...DEFAULT_CONFIG };
+let actualBackend = 'unknown';
+let voiceMode = 'auto';
+let refAudioData = null;
+let refAudioSampleRate = 0;
+let audioBlob = null;
+let abortRequested = false;
+let isGenerating = false;
+let rng = Math.random;
+let parakeetModelPromise = null;
+let isTranscribingReference = false;
+let referenceSelectionId = 0;
+let referenceTranscriptSource = null;
+let runStartedAt = 0;
+let runTotalUnits = 1;
+let runCompletedUnits = 0;
+
+ort.env.wasm.wasmPaths = ORT_CDN;
+ort.env.wasm.numThreads = globalThis.crossOriginIsolated
+  ? Math.max(1, Math.min(8, navigator.hardwareConcurrency || 4))
+  : 1;
+ort.env.wasm.simd = true;
+ort.env.logLevel = 'warning';
+
+configureOrtWeb({
+  wasmPaths: ORT_CDN,
+  numThreads: globalThis.crossOriginIsolated
+    ? Math.max(1, Math.min(8, navigator.hardwareConcurrency || 4))
+    : 1,
+  simd: true,
+  proxy: false,
+});
+
+function hfUrl(path) {
+  return new URL(path, HF_BASE).href;
+}
+
+function setStatus(state, text) {
+  statusDot.className = `status-dot ${state}`;
+  statusText.textContent = text;
+}
+
+function setProgress(pct, status, stats = '') {
+  const safePct = Math.max(0, Math.min(100, Number(pct) || 0));
+  progressPct.textContent = String(Math.round(safePct));
+  progressBar.style.width = `${safePct}%`;
+  if (status) progressStatus.textContent = status;
+  if (stats) progressStats.textContent = stats;
+}
+
+function setModelState(element, state) {
+  if (!element) return;
+  element.classList.remove('loading', 'ready', 'error');
+  if (state) element.classList.add(state);
+}
+
+function setLoadStage(element, state, detail = '') {
+  if (!element) return;
+  element.classList.remove('loading', 'ready', 'error');
+  if (state) element.classList.add(state);
+  if (state === 'ready') element.querySelector('.load-stage-icon').textContent = '✓';
+  if (state === 'error') element.querySelector('.load-stage-icon').textContent = '!';
+  if (detail) element.querySelector('.load-stage-detail').textContent = detail;
+}
+
+function formatClock(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return 'calculating…';
+  const rounded = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(rounded / 60);
+  const rest = rounded % 60;
+  return minutes ? `${minutes}m ${String(rest).padStart(2, '0')}s` : `${rest}s`;
+}
+
+function setRunProgress({ completed = runCompletedUnits, total = runTotalUnits, phase = '', chunkText = '', eta = null } = {}) {
+  runCompletedUnits = Math.max(0, Number(completed) || 0);
+  runTotalUnits = Math.max(1, Number(total) || 1);
+  const pct = Math.max(0, Math.min(100, runCompletedUnits / runTotalUnits * 100));
+  runProgressFill.style.width = `${pct}%`;
+  if (phase) genStatus.textContent = phase;
+  if (chunkText) runChunk.textContent = chunkText;
+  let remainingSeconds = eta;
+  if (remainingSeconds == null && runStartedAt && runCompletedUnits > 0) {
+    const elapsed = (performance.now() - runStartedAt) / 1000;
+    remainingSeconds = elapsed / runCompletedUnits * Math.max(0, runTotalUnits - runCompletedUnits);
+  }
+  runEta.textContent = `Overall ${Math.round(pct)}% · ETA ${formatClock(remainingSeconds)}`;
+}
+
+function showProgress(show) {
+  progressOverlay.classList.toggle('hidden', !show);
+}
+
+function hideError() {
+  progressError.classList.remove('visible');
+  progressError.textContent = '';
+  retryBtn.style.display = 'none';
+}
+
+function showError(message) {
+  progressError.textContent = message;
+  progressError.classList.add('visible');
+  retryBtn.style.display = 'inline-flex';
+  setStatus('error', 'ERROR');
+  showProgress(true);
+}
+
+function setUIEnabled(enabled) {
+  textInput.disabled = !enabled;
+  stepsSlider.disabled = !enabled;
+  speedSlider.disabled = !enabled;
+  generateBtn.disabled = !enabled;
+  refAudioInput.disabled = !enabled;
+  refTextInput.disabled = !enabled;
+}
+
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(2)} GB`;
+  if (bytes >= 1e6) return `${(bytes / 1e6).toFixed(1)} MB`;
+  return `${Math.round(bytes / 1e3)} KB`;
+}
+
+function tensorInfo(tensor) {
+  return tensor ? { type: tensor.type, dims: tensor.dims, length: tensor.data?.length } : null;
+}
+
+function updateSliderLabels() {
+  stepsVal.textContent = stepsSlider.value;
+  speedVal.textContent = `${(Number(speedSlider.value) / 100).toFixed(1)}x`;
+}
+
+stepsSlider.addEventListener('input', updateSliderLabels);
+speedSlider.addEventListener('input', updateSliderLabels);
+updateSliderLabels();
+textInput.addEventListener('input', () => { textCounter.textContent = `${textInput.value.length.toLocaleString()} characters`; });
+
+voiceModeToggle.addEventListener('click', (event) => {
+  const button = event.target.closest('.voice-mode-btn');
+  if (!button || isGenerating) return;
+  voiceMode = button.dataset.mode;
+  voiceModeToggle.querySelectorAll('.voice-mode-btn').forEach((item) => {
+    item.classList.toggle('active', item === button);
+  });
+  voiceCloneArea.classList.toggle('visible', voiceMode === 'clone');
+  if (voiceMode === 'auto') {
+    voiceInfo.classList.remove('visible');
+  } else if (refAudioData) {
+    voiceInfo.classList.add('visible');
+    if (isTranscribingReference) {
+      voiceInfo.style.color = 'var(--br-blue)';
+      voiceInfo.textContent = `${PARAKEET_LABEL} · automatic transcription in progress...`;
+    }
+  }
+});
+
+refAudioInput.addEventListener('change', async () => {
+  const file = refAudioInput.files?.[0];
+  if (!file) return;
+
+  const selectionId = ++referenceSelectionId;
+  referenceTranscriptSource = null;
+  refTextInput.value = '';
+  refTextInput.disabled = true;
+  voiceInfo.classList.add('visible');
+  voiceInfo.style.color = 'var(--br-muted)';
+  voiceInfo.textContent = 'Decoding reference audio...';
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const decoded = await ctx.decodeAudioData(buffer.slice(0));
+    const mono = mixToMono(decoded);
+    await ctx.close().catch(() => {});
+
+    if (selectionId !== referenceSelectionId) return;
+
+    refAudioData = mono;
+    refAudioSampleRate = decoded.sampleRate;
+    refAudioName.textContent = file.name;
+    refAudioLabel.classList.add('has-file');
+    voiceInfo.style.color = 'var(--br-blue)';
+    voiceInfo.textContent = `Reference ready · ${decoded.duration.toFixed(1)}s · ${decoded.sampleRate} Hz · starting automatic transcription...`;
+
+    await transcribeReferenceWithParakeet(selectionId);
+  } catch (error) {
+    if (selectionId !== referenceSelectionId) return;
+    console.error('[OmniVoice] Reference decode/transcription failed', error);
+    refAudioData = null;
+    refAudioSampleRate = 0;
+    refAudioLabel.classList.remove('has-file');
+    refTextInput.disabled = false;
+    voiceInfo.style.color = 'var(--br-red)';
+    voiceInfo.textContent = `Reference audio failed: ${error.message}`;
+  }
+});
+
+refTextInput.addEventListener('input', () => {
+  if (!isTranscribingReference && refTextInput.value.trim()) {
+    referenceTranscriptSource = 'edited';
+    voiceInfo.classList.add('visible');
+    voiceInfo.style.color = 'var(--br-mint)';
+    voiceInfo.textContent = 'Reference transcript ready · automatic result can be corrected manually.';
+  }
+});
+
+async function getParakeetModel() {
+  if (!parakeetModelPromise) {
+    parakeetModelPromise = loadHuggingfaceModel(PARAKEET_REPO, {
+      revision: PARAKEET_REVISION,
+      quantization: 'int8',
+      sessionOptions: {
+        executionProviders: ['wasm'],
+        graphOptimizationLevel: 'all',
+        enableCpuMemArena: true,
+      },
+      decoderOptions: { maxSymbols: 10 },
+    }).catch((error) => {
+      parakeetModelPromise = null;
+      throw error;
+    });
+  }
+  return parakeetModelPromise;
+}
+
+async function transcribeReferenceWithParakeet(selectionId) {
+  if (!refAudioData || !refAudioSampleRate) throw new Error('Reference audio is unavailable.');
+
+  isTranscribingReference = true;
+  refTextInput.disabled = true;
+  generateBtn.disabled = true;
+  setStatus('loading', 'TRANSCRIBING');
+  voiceInfo.classList.add('visible');
+  voiceInfo.style.color = 'var(--br-blue)';
+  voiceInfo.textContent = `${PARAKEET_LABEL} · transcribing locally with the model already prepared at launch…`;
+
+  try {
+    const model = await getParakeetModel();
+    if (selectionId !== referenceSelectionId) return;
+
+    voiceInfo.textContent = `${PARAKEET_LABEL} · transcribing locally with automatic language detection...`;
+    const result = await model.transcribeSamples(refAudioData, refAudioSampleRate);
+    if (selectionId !== referenceSelectionId) return;
+
+    const transcript = String(result?.text || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!transcript) throw new Error('Parakeet returned an empty transcript. Try a clearer reference clip with speech only.');
+
+    refTextInput.value = transcript;
+    referenceTranscriptSource = 'parakeet';
+    voiceInfo.style.color = 'var(--br-mint)';
+    voiceInfo.textContent = `Automatic transcript ready · ${PARAKEET_LABEL} detected the language locally · ${transcript.length} characters · editable.`;
+    console.info('[OmniVoice] Parakeet reference transcript', {
+      repository: PARAKEET_REPO,
+      transcript,
+      words: result?.words?.length || 0,
+    });
+  } catch (error) {
+    if (selectionId !== referenceSelectionId) return;
+    console.error('[OmniVoice] Parakeet transcription failed', error);
+    referenceTranscriptSource = null;
+    voiceInfo.style.color = 'var(--br-red)';
+    voiceInfo.textContent = `Automatic transcription failed: ${error.message}. You can type or paste the transcript manually in the field above.`;
+  } finally {
+    if (selectionId === referenceSelectionId) {
+      isTranscribingReference = false;
+      refTextInput.disabled = false;
+      generateBtn.disabled = isGenerating || !mainSession || !decoderSession || !tokenizer;
+      setStatus('ready', actualBackend === 'webgpu' ? 'WEBGPU READY' : 'WASM READY');
+    }
+  }
+}
+
+function mixToMono(audioBuffer) {
+  const channels = audioBuffer.numberOfChannels;
+  const length = audioBuffer.length;
+  const mono = new Float32Array(length);
+  for (let channel = 0; channel < channels; channel++) {
+    const data = audioBuffer.getChannelData(channel);
+    for (let i = 0; i < length; i++) mono[i] += data[i] / channels;
+  }
+  return mono;
+}
+
+function resampleLinear(samples, fromRate, toRate) {
+  if (fromRate === toRate) return new Float32Array(samples);
+  if (!samples?.length || fromRate <= 0 || toRate <= 0) throw new Error('Invalid audio sample rate.');
+  const ratio = fromRate / toRate;
+  const outputLength = Math.max(1, Math.round(samples.length / ratio));
+  const output = new Float32Array(outputLength);
+  for (let i = 0; i < outputLength; i++) {
+    const position = i * ratio;
+    const left = Math.floor(position);
+    const right = Math.min(left + 1, samples.length - 1);
+    const fraction = position - left;
+    output[i] = samples[left] * (1 - fraction) + samples[right] * fraction;
+  }
+  return output;
+}
+
+// ─── Duration estimator (browser port of OmniVoice's rule estimator) ─────────
+const CHAR_WEIGHTS = Object.freeze({
+  cjk: 3.0, hangul: 2.5, kana: 2.2, ethiopic: 3.0, yi: 3.0,
+  indic: 1.8, thai_lao: 1.5, khmer_myanmar: 1.8,
+  arabic: 1.5, hebrew: 1.5,
+  latin: 1.0, cyrillic: 1.0, greek: 1.0, armenian: 1.0, georgian: 1.0,
+  punctuation: 0.5, space: 0.2, digit: 3.5, mark: 0.0, default: 1.0,
+});
+
+function charWeight(char) {
+  const cp = char.codePointAt(0);
+  if (cp === 32 || /\s/u.test(char)) return CHAR_WEIGHTS.space;
+  if (/\p{M}/u.test(char)) return CHAR_WEIGHTS.mark;
+  if (/\p{N}/u.test(char)) return CHAR_WEIGHTS.digit;
+  if (/[\p{P}\p{S}]/u.test(char)) return CHAR_WEIGHTS.punctuation;
+  if (cp >= 0x4e00 && cp <= 0x9fff || cp > 0x20000) return CHAR_WEIGHTS.cjk;
+  if (cp >= 0x3040 && cp <= 0x30ff) return CHAR_WEIGHTS.kana;
+  if (cp >= 0xac00 && cp <= 0xd7af) return CHAR_WEIGHTS.hangul;
+  if (cp >= 0x0590 && cp <= 0x05ff) return CHAR_WEIGHTS.hebrew;
+  if (cp >= 0x0600 && cp <= 0x08ff || cp >= 0xfb50 && cp <= 0xfeff) return CHAR_WEIGHTS.arabic;
+  if (cp >= 0x0900 && cp <= 0x0dff) return CHAR_WEIGHTS.indic;
+  if (cp >= 0x0e00 && cp <= 0x0eff) return CHAR_WEIGHTS.thai_lao;
+  if (cp >= 0x1000 && cp <= 0x109f || cp >= 0x1780 && cp <= 0x17ff) return CHAR_WEIGHTS.khmer_myanmar;
+  if (cp >= 0x0400 && cp <= 0x052f) return CHAR_WEIGHTS.cyrillic;
+  if (cp >= 0x0370 && cp <= 0x03ff) return CHAR_WEIGHTS.greek;
+  return CHAR_WEIGHTS.latin;
+}
+
+function textWeight(text) {
+  let total = 0;
+  for (const char of text) total += charWeight(char);
+  return total;
+}
+
+function estimateTargetTokens(text, refText = null, refTokenCount = null, speed = 1) {
+  let baselineText = refText;
+  let baselineTokens = refTokenCount;
+  if (!baselineText || !baselineTokens) {
+    baselineText = 'Nice to meet you.';
+    baselineTokens = 25;
+  }
+  const baselineWeight = Math.max(0.001, textWeight(baselineText));
+  const targetWeight = Math.max(0.001, textWeight(text));
+  const tokensPerWeight = baselineTokens / baselineWeight;
+  let estimate = targetWeight * tokensPerWeight;
+  if (estimate < 50) estimate = 50 * Math.pow(estimate / 50, 1 / 3);
+  if (speed > 0) estimate /= speed;
+  return Math.max(8, Math.round(estimate));
+}
+
+// A single OmniVoice pass should stay reasonably short for stable WebGPU memory
+// and complete pronunciation. Long texts are split automatically and the WAVs
+// are concatenated, so the public UI has no duration limit.
+const MAX_CHUNK_AUDIO_TOKENS = 480; // roughly 19.2 seconds: fewer joins, still below the 700-token safety ceiling
+const TOKEN_PADDING_FACTOR = 1.14;
+const TOKEN_PADDING_FIXED = 8;
+
+function paddedTargetTokens(text, refText, refTokenCount, speed) {
+  const raw = estimateTargetTokens(text, refText, refTokenCount, speed);
+  return Math.max(24, Math.min(680, Math.ceil(raw * TOKEN_PADDING_FACTOR + TOKEN_PADDING_FIXED)));
+}
+
+function splitLongUnitByWords(unit, estimateFn, maxTokens) {
+  const words = unit.trim().split(/\s+/u).filter(Boolean);
+  if (!words.length) return [];
+  const pieces = [];
+  let current = '';
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (current && estimateFn(candidate) > maxTokens) {
+      pieces.push(current.trim());
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current.trim()) pieces.push(current.trim());
+  return pieces;
+}
+
+function splitTextIntoChunks(text, estimateFn, maxTokens = MAX_CHUNK_AUDIO_TOKENS) {
+  const normalized = text.replace(/\r/g, '').replace(/[ \t]+/g, ' ').trim();
+  if (!normalized) return [];
+
+  // Prefer paragraphs and sentence boundaries. Keep punctuation attached.
+  const paragraphs = normalized.split(/\n+/u).map((part) => part.trim()).filter(Boolean);
+  const units = [];
+  for (const paragraph of paragraphs) {
+    const sentences = paragraph.match(/[^.!?…]+(?:[.!?…]+["'»”)]*|$)/gu) || [paragraph];
+    for (const sentence of sentences) {
+      const clean = sentence.trim();
+      if (!clean) continue;
+      if (estimateFn(clean) <= maxTokens) {
+        units.push(clean);
+      } else {
+        // Try commas/semicolons before falling back to words.
+        const clauses = clean.match(/[^,;:]+(?:[,;:]+|$)/gu) || [clean];
+        for (const clause of clauses) {
+          const c = clause.trim();
+          if (!c) continue;
+          if (estimateFn(c) <= maxTokens) units.push(c);
+          else units.push(...splitLongUnitByWords(c, estimateFn, maxTokens));
+        }
+      }
+    }
+  }
+
+  const chunks = [];
+  let current = '';
+  for (const unit of units) {
+    const candidate = current ? `${current} ${unit}` : unit;
+    if (current && estimateFn(candidate) > maxTokens) {
+      chunks.push(current.trim());
+      current = unit;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  return chunks;
+}
+
+function concatenateAudio(parts, sampleRate) {
+  if (!parts.length) return new Float32Array(0);
+  if (parts.length === 1) return parts[0];
+  // Join at a short crossfade instead of inserting a fixed silence. Sentence
+  // endings already contain their own prosody; the overlap only removes seams.
+  const overlap = Math.max(1, Math.round(sampleRate * 0.024));
+  const usableOverlaps = parts.slice(1).reduce((sum, part, i) => sum + Math.min(overlap, parts[i].length, part.length), 0);
+  const total = parts.reduce((sum, part) => sum + part.length, 0) - usableOverlaps;
+  const output = new Float32Array(total);
+  let offset = 0;
+  output.set(parts[0], 0);
+  offset = parts[0].length;
+  for (let p = 1; p < parts.length; p++) {
+    const part = parts[p];
+    const n = Math.min(overlap, offset, part.length);
+    const start = offset - n;
+    for (let i = 0; i < n; i++) {
+      const t = (i + 1) / (n + 1);
+      output[start + i] = output[start + i] * (1 - t) + part[i] * t;
+    }
+    output.set(part.subarray(n), offset);
+    offset += part.length - n;
+  }
+  return output;
+}
+
+function getTimeSteps(tStart, tEnd, numStep, tShift) {
+  const values = [];
+  for (let i = 0; i <= numStep; i++) {
+    let t = tStart + (tEnd - tStart) * (i / numStep);
+    t = tShift * t / (1 + (tShift - 1) * t);
+    values.push(t);
+  }
+  return values;
+}
+
+function mulberry32(seed) {
+  let state = seed | 0;
+  return () => {
+    state = (state + 0x6D2B79F5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const conditionalLogProbs = new Float32Array(1025);
+const unconditionalLogProbs = new Float32Array(1025);
+const guidedLogProbs = new Float32Array(1025);
+
+function logSoftmaxInto(values, offset, length, output) {
+  let max = -Infinity;
+  for (let i = 0; i < length; i++) max = Math.max(max, values[offset + i]);
+  let sum = 0;
+  for (let i = 0; i < length; i++) sum += Math.exp(values[offset + i] - max);
+  const logSumExp = max + Math.log(sum);
+  for (let i = 0; i < length; i++) output[i] = values[offset + i] - logSumExp;
+}
+
+function postProcessLogits(logits, C, maxLen, V, targetTokens, targetOffset, maskId, guidanceScale, layerPenalty, predictions, scores) {
+  const guidedMultiplier = 1 + guidanceScale;
+  for (let c = 0; c < C; c++) {
+    const codebookPenalty = layerPenalty * c;
+    for (let t = 0; t < targetTokens; t++) {
+      const conditionalOffset = (c * maxLen + targetOffset + t) * V;
+      const unconditionalOffset = ((C + c) * maxLen + t) * V;
+      logSoftmaxInto(logits, conditionalOffset, V, conditionalLogProbs);
+      logSoftmaxInto(logits, unconditionalOffset, V, unconditionalLogProbs);
+
+      let maxGuided = -Infinity;
+      for (let v = 0; v < V; v++) {
+        const value = guidedMultiplier * conditionalLogProbs[v] - guidanceScale * unconditionalLogProbs[v];
+        guidedLogProbs[v] = value;
+        if (value > maxGuided) maxGuided = value;
+      }
+      let expSum = 0;
+      for (let v = 0; v < V; v++) expSum += Math.exp(guidedLogProbs[v] - maxGuided);
+      const guidedLse = maxGuided + Math.log(expSum);
+
+      let bestToken = 0;
+      let bestScore = -Infinity;
+      for (let v = 0; v < V; v++) {
+        if (v === maskId) continue;
+        const score = guidedLogProbs[v] - guidedLse;
+        if (score > bestScore) {
+          bestScore = score;
+          bestToken = v;
+        }
+      }
+      const index = c * targetTokens + t;
+      predictions[index] = bestToken;
+      scores[index] = bestScore - codebookPenalty;
+    }
+  }
+}
+
+function topKUnmask(scores, predictions, tokens, count) {
+  const candidates = [];
+  for (let i = 0; i < scores.length; i++) {
+    if (Number.isFinite(scores[i])) candidates.push(i);
+  }
+  candidates.sort((a, b) => scores[b] - scores[a]);
+  const limit = Math.min(count, candidates.length);
+  for (let i = 0; i < limit; i++) {
+    const index = candidates[i];
+    tokens[index] = BigInt(predictions[index]);
+  }
+}
+
+async function prepareInferenceInputs(text, targetTokens, options = {}) {
+  const { refText = null, refAudioTokens = null, lang = null, instruct = null } = options;
+  const C = config.num_audio_codebook;
+  const maskId = config.audio_mask_id;
+
+  const styleText = `<|denoise|><|lang_start|>${lang || 'None'}<|lang_end|><|instruct_start|>${instruct || 'None'}<|instruct_end|>`;
+  let completeText = refText ? `${refText.trim()} ${text.trim()}` : text.trim();
+  completeText = completeText.replace(/[\r\n]+/g, '').replace(/[ \t]+/g, ' ');
+  const wrappedText = `<|text_start|>${completeText}<|text_end|>`;
+
+  const [styleEncoded, textEncoded] = await Promise.all([
+    tokenizer(styleText, { add_special_tokens: false }),
+    tokenizer(wrappedText, { add_special_tokens: false }),
+  ]);
+  const styleIds = Array.from(styleEncoded.input_ids.data, Number);
+  const textIds = Array.from(textEncoded.input_ids.data, Number);
+  const refLength = refAudioTokens ? refAudioTokens[0].length : 0;
+  const totalLength = styleIds.length + textIds.length + refLength + targetTokens;
+  const inputIds = new BigInt64Array(C * totalLength);
+
+  for (let c = 0; c < C; c++) {
+    const base = c * totalLength;
+    for (let i = 0; i < styleIds.length; i++) inputIds[base + i] = BigInt(styleIds[i]);
+    const textOffset = styleIds.length;
+    for (let i = 0; i < textIds.length; i++) inputIds[base + textOffset + i] = BigInt(textIds[i]);
+    const refOffset = textOffset + textIds.length;
+    if (refAudioTokens) {
+      for (let t = 0; t < refLength; t++) inputIds[base + refOffset + t] = BigInt(refAudioTokens[c][t]);
+    }
+    const targetOffset = refOffset + refLength;
+    for (let t = 0; t < targetTokens; t++) inputIds[base + targetOffset + t] = BigInt(maskId);
+  }
+
+  const refOffset = styleIds.length + textIds.length;
+  const targetOffset = refOffset + refLength;
+  const audioMask = new Uint8Array(totalLength);
+  const audioStart = refAudioTokens ? refOffset : targetOffset;
+  for (let i = audioStart; i < totalLength; i++) audioMask[i] = 1;
+
+  return { inputIds, audioMask, totalLength, targetTokens, targetOffset, C };
+}
+
+async function generateIterative(inputs, numSteps, guidanceScale = 4.0, tShift = 0.05, layerPenalty = 5.0, positionTemperature = 5.0, progressMeta = {}) {
+  const { inputIds, audioMask, totalLength, targetTokens, targetOffset, C } = inputs;
+  const maskId = config.audio_mask_id;
+  const V = config.audio_vocab_size;
+  const maxLen = totalLength;
+  const unconditionalLength = targetTokens;
+
+  const batchIds = new BigInt64Array(2 * C * maxLen).fill(BigInt(maskId));
+  for (let c = 0; c < C; c++) {
+    for (let s = 0; s < totalLength; s++) batchIds[c * maxLen + s] = inputIds[c * totalLength + s];
+    for (let t = 0; t < unconditionalLength; t++) {
+      batchIds[(C + c) * maxLen + t] = inputIds[c * totalLength + targetOffset + t];
+    }
+  }
+
+  const batchAudioMask = new Uint8Array(2 * maxLen);
+  for (let s = 0; s < totalLength; s++) batchAudioMask[s] = audioMask[s];
+  for (let t = 0; t < unconditionalLength; t++) batchAudioMask[maxLen + t] = 1;
+
+  const batchAttentionMask = new Uint8Array(2 * maxLen * maxLen);
+  for (let q = 0; q < totalLength; q++) {
+    const row = q * maxLen;
+    batchAttentionMask.fill(1, row, row + totalLength);
+  }
+  const uncondBase = maxLen * maxLen;
+  for (let q = 0; q < unconditionalLength; q++) {
+    const row = uncondBase + q * maxLen;
+    batchAttentionMask.fill(1, row, row + unconditionalLength);
+  }
+  for (let position = unconditionalLength; position < maxLen; position++) {
+    batchAttentionMask[uncondBase + position * maxLen + position] = 1;
+  }
+
+  const tokens = new BigInt64Array(C * targetTokens).fill(BigInt(maskId));
+  const predictions = new Int32Array(C * targetTokens);
+  const scores = new Float32Array(C * targetTokens);
+  const timesteps = getTimeSteps(0, 1, numSteps + 1, tShift);
+  const totalMasked = targetTokens * C;
+  let remaining = totalMasked;
+  const schedule = [];
+  for (let step = 0; step < numSteps; step++) {
+    const amount = step === numSteps - 1
+      ? remaining
+      : Math.min(Math.ceil(totalMasked * (timesteps[step + 1] - timesteps[step])), remaining);
+    schedule.push(amount);
+    remaining -= amount;
+  }
+
+  console.info('[OmniVoice] Generation layout', {
+    conditionalLength: totalLength,
+    targetTokens,
+    codebooks: C,
+    steps: numSteps,
+    backend: actualBackend,
+  });
+
+  const maskBigInt = BigInt(maskId);
+  for (let step = 0; step < numSteps; step++) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    if (abortRequested) throw new Error('Generation cancelled.');
+
+    const chunkNumber = progressMeta.chunkIndex + 1;
+    const chunkCount = progressMeta.chunkCount;
+    genStep.textContent = `step ${step + 1}/${numSteps}`;
+    setRunProgress({
+      completed: progressMeta.baseUnits + step + 1,
+      total: progressMeta.totalUnits,
+      phase: `Chunk ${chunkNumber}/${chunkCount} · diffusion`,
+      chunkText: `${chunkCount - chunkNumber} chunk${chunkCount - chunkNumber === 1 ? '' : 's'} remaining · ${progressMeta.targetTokens} audio tokens`,
+    });
+    const stepStarted = performance.now();
+
+    const result = await mainSession.run({
+      input_ids: new ort.Tensor('int64', batchIds, [2, C, maxLen]),
+      audio_mask: new ort.Tensor('bool', batchAudioMask, [2, maxLen]),
+      attention_mask: new ort.Tensor('bool', batchAttentionMask, [2, 1, maxLen, maxLen]),
+    });
+    const logitsTensor = result.audio_logits || result[mainSession.outputNames[0]];
+    if (!logitsTensor) throw new Error(`Main model did not return audio_logits. Outputs: ${mainSession.outputNames.join(', ')}`);
+    const logits = logitsTensor.data;
+    if (!(logits instanceof Float32Array)) {
+      throw new Error(`Expected float32 audio logits, received ${logitsTensor.type}.`);
+    }
+
+    postProcessLogits(logits, C, maxLen, V, targetTokens, targetOffset, maskId, guidanceScale, layerPenalty, predictions, scores);
+
+    const inverseTemperature = positionTemperature > 0 ? 1 / positionTemperature : 0;
+    for (let i = 0; i < scores.length; i++) {
+      if (tokens[i] !== maskBigInt) {
+        scores[i] = -Infinity;
+      } else if (positionTemperature > 0) {
+        const uniform = Math.min(1 - 1e-10, Math.max(1e-10, rng()));
+        const gumbel = -Math.log(-Math.log(uniform));
+        scores[i] = scores[i] * inverseTemperature + gumbel;
+      }
+    }
+
+    topKUnmask(scores, predictions, tokens, schedule[step]);
+    for (let c = 0; c < C; c++) {
+      for (let t = 0; t < targetTokens; t++) {
+        const token = tokens[c * targetTokens + t];
+        batchIds[c * maxLen + targetOffset + t] = token;
+        batchIds[(C + c) * maxLen + t] = token;
+      }
+    }
+
+    console.info(`[OmniVoice] Step ${step + 1}/${numSteps}`, `${(performance.now() - stepStarted).toFixed(0)} ms`);
+  }
+
+  let maskedRemaining = 0;
+  for (const token of tokens) if (token === maskBigInt) maskedRemaining++;
+  if (maskedRemaining) throw new Error(`${maskedRemaining} audio tokens remained masked after generation.`);
+  return tokens;
+}
+
+async function decodeTokens(tokens, C, targetTokens) {
+  genStatus.textContent = 'Decoding audio tokens';
+  genStep.textContent = '';
+  const result = await decoderSession.run({
+    audio_codes: new ort.Tensor('int64', tokens, [1, C, targetTokens]),
+  });
+  const tensor = result.audio_values || result[decoderSession.outputNames[0]];
+  if (!tensor) throw new Error(`Decoder returned no waveform. Outputs: ${decoderSession.outputNames.join(', ')}`);
+  console.info('[OmniVoice] Decoder waveform', tensorInfo(tensor));
+  return new Float32Array(tensor.data);
+}
+
+function postProcessAudio(input, sampleRate, trimLeading = false) {
+  if (!input?.length) throw new Error('The decoder returned an empty waveform.');
+  const clean = new Float32Array(input.length);
+  let mean = 0, valid = 0;
+  for (let i = 0; i < input.length; i++) {
+    const value = Number(input[i]);
+    if (Number.isFinite(value)) { clean[i] = value; mean += value; valid++; }
+  }
+  if (!valid) throw new Error('The decoder returned only invalid samples.');
+  mean /= valid;
+  for (let i = 0; i < clean.length; i++) clean[i] -= mean;
+
+  const threshold = 0.0035;
+  const leadMargin = Math.floor(sampleRate * 0.025);
+  const tailMargin = Math.floor(sampleRate * 0.055);
+  let start = 0, end = clean.length;
+  // Preserve the very first chunk's attack. Later chunks may safely discard
+  // decoder pre-roll, which is the main source of unnatural gaps at joins.
+  if (trimLeading) {
+    for (let i = 0; i < clean.length; i++) {
+      if (Math.abs(clean[i]) > threshold) { start = Math.max(0, i - leadMargin); break; }
+    }
+  }
+  for (let i = clean.length - 1; i >= start; i--) {
+    if (Math.abs(clean[i]) > threshold) { end = Math.min(clean.length, i + tailMargin); break; }
+  }
+  const output = clean.slice(start, Math.max(start + 1, end));
+  let peak = 0;
+  for (let i = 0; i < output.length; i++) peak = Math.max(peak, Math.abs(output[i]));
+  if (peak < 1e-7) throw new Error('The decoded waveform is silent.');
+  const gain = Math.min(8, 0.85 / peak);
+  for (let i = 0; i < output.length; i++) output[i] = Math.max(-1, Math.min(1, output[i] * gain));
+  const fadeLength = Math.min(Math.floor(sampleRate * 0.006), Math.floor(output.length / 2));
+  for (let i = 0; i < fadeLength; i++) {
+    const factor = (i + 1) / (fadeLength + 1);
+    output[i] *= factor;
+    output[output.length - 1 - i] *= factor;
+  }
+  return output;
+}
+
+function createWavBlob(samples, sampleRate) {
+  const bytesPerSample = 2;
+  const buffer = new ArrayBuffer(44 + samples.length * bytesPerSample);
+  const view = new DataView(buffer);
+  const writeText = (offset, text) => {
+    for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
+  };
+  writeText(0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * bytesPerSample, true);
+  writeText(8, 'WAVE');
+  writeText(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * bytesPerSample, true);
+  view.setUint16(32, bytesPerSample, true);
+  view.setUint16(34, 16, true);
+  writeText(36, 'data');
+  view.setUint32(40, samples.length * bytesPerSample, true);
+  for (let i = 0; i < samples.length; i++) {
+    const sample = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(44 + i * 2, sample < 0 ? sample * 32768 : sample * 32767, true);
+  }
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+async function loadEncoderSession() {
+  if (encoderSession) return encoderSession;
+  setStatus('loading', 'VOICE ENCODER');
+  const providers = actualBackend === 'webgpu' ? ['webgpu', 'wasm'] : ['wasm'];
+  try {
+    encoderSession = await ort.InferenceSession.create(hfUrl(ENCODER_MODEL), {
+      executionProviders: providers,
+      graphOptimizationLevel: 'all',
+    });
+  } catch (error) {
+    console.warn('[OmniVoice] Encoder WebGPU failed; retrying WASM.', error);
+    encoderSession = await ort.InferenceSession.create(hfUrl(ENCODER_MODEL), {
+      executionProviders: ['wasm'],
+      graphOptimizationLevel: 'all',
+    });
+  }
+  console.info('[OmniVoice] Encoder loaded', {
+    inputs: encoderSession.inputNames,
+    outputs: encoderSession.outputNames,
+  });
+  return encoderSession;
+}
+
+async function encodeReferenceAudio() {
+  if (!refAudioData || !refAudioSampleRate) throw new Error('Upload a reference audio file first.');
+  await loadEncoderSession();
+  genStatus.textContent = 'Encoding reference voice';
+  genStep.textContent = '';
+
+  let pcm = resampleLinear(refAudioData, refAudioSampleRate, config.sampling_rate);
+  const maxLength = config.sampling_rate * 20;
+  if (pcm.length > maxLength) pcm = pcm.slice(0, maxLength);
+  const alignedLength = pcm.length - (pcm.length % CODEC_HOP_LENGTH);
+  if (alignedLength < CODEC_HOP_LENGTH * 10) throw new Error('Reference audio must be at least about 0.4 seconds.');
+  pcm = pcm.slice(0, alignedLength);
+
+  const result = await encoderSession.run({
+    input_values: new ort.Tensor('float32', pcm, [1, 1, pcm.length]),
+  });
+  const tensor = result.audio_codes || result[encoderSession.outputNames[0]];
+  if (!tensor || tensor.dims.length !== 3) throw new Error('Voice encoder returned an unexpected tensor.');
+  const C = Number(tensor.dims[1]);
+  const T = Number(tensor.dims[2]);
+  if (C !== config.num_audio_codebook) throw new Error(`Voice encoder returned ${C} codebooks; expected ${config.num_audio_codebook}.`);
+  const nested = Array.from({ length: C }, () => new Array(T));
+  for (let c = 0; c < C; c++) {
+    for (let t = 0; t < T; t++) nested[c][t] = Number(tensor.data[c * T + t]);
+  }
+  console.info('[OmniVoice] Reference encoded', { codebooks: C, tokens: T, duration: pcm.length / config.sampling_rate });
+  return nested;
+}
+
+async function loadTokenizer() {
+  setProgress(7, 'LOADING TOKENIZER', `${HF_REPO} · Qwen2 BPE`);
+  tokenizer = await AutoTokenizer.from_pretrained(HF_REPO, {
+    revision: HF_REVISION,
+    progress_callback: (event) => {
+      if (event?.status === 'progress' && Number.isFinite(event.progress)) {
+        setProgress(7 + event.progress * 0.08, 'LOADING TOKENIZER', event.file || 'tokenizer.json');
+      }
+    },
+  });
+}
+
+async function createMainSession() {
+  const externalData = MAIN_SHARDS.map((name) => ({ path: name, data: hfUrl(name) }));
+  setProgress(18, 'LOADING OMNIVOICE CORE', 'Five FP32 shards download directly from Hugging Face · ~2.3 GB first visit');
+  try {
+    mainSession = await ort.InferenceSession.create(hfUrl(MAIN_GRAPH), {
+      executionProviders: ['webgpu'],
+      externalData,
+      graphOptimizationLevel: 'all',
+      enableCpuMemArena: true,
+    });
+    actualBackend = 'webgpu';
+  } catch (webgpuError) {
+    console.warn('[OmniVoice] Main model WebGPU failed; retrying WASM.', webgpuError);
+    setProgress(55, 'WEBGPU FALLBACK', 'Retrying the core model with WASM');
+    mainSession = await ort.InferenceSession.create(hfUrl(MAIN_GRAPH), {
+      executionProviders: ['wasm'],
+      externalData,
+      graphOptimizationLevel: 'all',
+      enableCpuMemArena: true,
+    });
+    actualBackend = 'wasm';
+  }
+  console.info('[OmniVoice] Main model loaded', {
+    backend: actualBackend,
+    inputs: mainSession.inputNames,
+    outputs: mainSession.outputNames,
+  });
+}
+
+async function createDecoderSession() {
+  setProgress(86, 'LOADING AUDIO DECODER', '86.5 MB · Hugging Face');
+  const providers = actualBackend === 'webgpu' ? ['webgpu', 'wasm'] : ['wasm'];
+  decoderSession = await ort.InferenceSession.create(hfUrl(DECODER_MODEL), {
+    executionProviders: providers,
+    graphOptimizationLevel: 'all',
+  });
+  console.info('[OmniVoice] Decoder loaded', {
+    inputs: decoderSession.inputNames,
+    outputs: decoderSession.outputNames,
+  });
+}
+
+async function warmup() {
+  setProgress(96, 'WARMING UP WEBGPU', 'Compiling shaders');
+  try {
+    const dummyIds = new BigInt64Array(2 * config.num_audio_codebook * 4).fill(BigInt(config.audio_mask_id));
+    const dummyAudioMask = new Uint8Array(2 * 4);
+    const dummyAttentionMask = new Uint8Array(2 * 1 * 4 * 4).fill(1);
+    await mainSession.run({
+      input_ids: new ort.Tensor('int64', dummyIds, [2, config.num_audio_codebook, 4]),
+      audio_mask: new ort.Tensor('bool', dummyAudioMask, [2, 4]),
+      attention_mask: new ort.Tensor('bool', dummyAttentionMask, [2, 1, 4, 4]),
+    });
+    const dummyCodes = new BigInt64Array(config.num_audio_codebook * 2);
+    await decoderSession.run({
+      audio_codes: new ort.Tensor('int64', dummyCodes, [1, config.num_audio_codebook, 2]),
+    });
+    if (encoderSession) {
+      const dummyAudio = new Float32Array(CODEC_HOP_LENGTH * 10);
+      await encoderSession.run({ input_values: new ort.Tensor('float32', dummyAudio, [1, 1, dummyAudio.length]) });
+    }
+  } catch (error) {
+    console.warn('[OmniVoice] Warmup was skipped after a non-fatal error.', error);
+  }
+}
+
+async function initialize() {
+  hideError();
+  showProgress(true);
+  setUIEnabled(false);
+  setStatus('loading', 'INITIALIZING');
+  setProgress(0, 'CHECKING WEBGPU', 'Preparing every model now — no later downloads');
+  [modelCoreState, modelDecoderState, modelEncoderState, modelAsrState].forEach(el => setModelState(el, null));
+
+  try {
+    if (!navigator.gpu) throw new Error('WebGPU is unavailable. Use a current 64-bit Chrome or Edge browser with hardware acceleration enabled.');
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) throw new Error('No WebGPU adapter was found. Check browser hardware acceleration and GPU drivers.');
+    console.info('[OmniVoice] WebGPU adapter', adapter.info || {});
+
+    const configResponse = await fetch(hfUrl('omnivoice-config.json'));
+    if (configResponse.ok) config = { ...DEFAULT_CONFIG, ...(await configResponse.json()) };
+
+    setProgress(3, 'LOADING TOKENIZER', 'Qwen2 multilingual tokenizer');
+    await loadTokenizer();
+
+    setLoadStage(loadStageCore, 'loading'); setModelState(modelCoreState, 'loading');
+    setProgress(10, 'LOADING OMNIVOICE CORE', 'Core graph + five Hugging Face shards');
+    await createMainSession();
+    setLoadStage(loadStageCore, 'ready', `${actualBackend.toUpperCase()} ready`); setModelState(modelCoreState, 'ready');
+
+    setLoadStage(loadStageDecoder, 'loading'); setModelState(modelDecoderState, 'loading');
+    setProgress(57, 'LOADING AUDIO DECODER', 'Preparing waveform decoder');
+    await createDecoderSession();
+    setLoadStage(loadStageDecoder, 'ready', 'Ready'); setModelState(modelDecoderState, 'ready');
+
+    setLoadStage(loadStageEncoder, 'loading'); setModelState(modelEncoderState, 'loading');
+    setProgress(67, 'LOADING VOICE ENCODER', 'Preparing zero-shot cloning · 654 MB');
+    await loadEncoderSession();
+    setLoadStage(loadStageEncoder, 'ready', 'Ready'); setModelState(modelEncoderState, 'ready');
+
+    setLoadStage(loadStageAsr, 'loading'); setModelState(modelAsrState, 'loading');
+    setProgress(79, 'LOADING PARAKEET ASR', 'Preparing automatic multilingual reference transcription');
+    await getParakeetModel();
+    setLoadStage(loadStageAsr, 'ready', 'Ready'); setModelState(modelAsrState, 'ready');
+
+    setProgress(96, 'WARMING UP', 'Compiling sessions and validating the complete stack');
+    await warmup();
+
+    setProgress(100, 'LOCAL STACK READY', `${actualBackend.toUpperCase()} · Core, decoder, encoder and Parakeet are prepared`);
+    setUIEnabled(true);
+    setStatus('ready', actualBackend === 'webgpu' ? 'ALL MODELS READY' : 'WASM READY');
+    setTimeout(() => showProgress(false), 650);
+  } catch (error) {
+    console.error('[OmniVoice] Initialization failed', error);
+    [loadStageCore, loadStageDecoder, loadStageEncoder, loadStageAsr].forEach(el => {
+      if (el.classList.contains('loading')) setLoadStage(el, 'error', 'Failed');
+    });
+    showError(`Initialization failed: ${error.message || error}`);
+  }
+}
+
+async function generate() {
+  if (isGenerating) return;
+  const text = textInput.value.trim();
+  if (!text) { textInput.focus(); return; }
+  if (!mainSession || !decoderSession || !encoderSession || !tokenizer || !parakeetModelPromise) {
+    showError('The complete local model stack is not initialized yet.'); return;
+  }
+  if (voiceMode === 'clone' && isTranscribingReference) {
+    voiceInfo.classList.add('visible'); voiceInfo.style.color = 'var(--blue)';
+    voiceInfo.textContent = `${PARAKEET_LABEL} is transcribing the reference. Generation unlocks when it finishes.`; return;
+  }
+  if (voiceMode === 'clone' && !refAudioData) {
+    voiceInfo.classList.add('visible'); voiceInfo.style.color = 'var(--red)';
+    voiceInfo.textContent = 'Choose a reference audio file before using voice cloning.'; return;
+  }
+  if (voiceMode === 'clone' && !refTextInput.value.trim()) {
+    voiceInfo.classList.add('visible'); voiceInfo.style.color = 'var(--red)';
+    voiceInfo.textContent = 'The automatic transcript is missing. Retry the reference or edit the transcript field.'; return;
+  }
+
+  isGenerating = true; abortRequested = false; setUIEnabled(false);
+  generateBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex';
+  genIndicator.classList.add('visible'); outputPanel.classList.remove('visible');
+  setStatus('loading', 'GENERATING');
+  runStartedAt = performance.now(); runTotalUnits = 1; runCompletedUnits = 0;
+  setRunProgress({ completed: 0, total: 1, phase: 'Preparing generation', chunkText: 'Analyzing script and voice…' });
+
+  try {
+    let referenceTokens = null, referenceText = null;
+    if (voiceMode === 'clone') {
+      referenceText = refTextInput.value.trim();
+      genStep.textContent = 'voice analysis';
+      setRunProgress({ completed: .2, total: 1, phase: 'Encoding reference voice', chunkText: 'Voice encoder · model already loaded' });
+      referenceTokens = await encodeReferenceAudio();
+    }
+
+    const speed = Number(speedSlider.value) / 100;
+    const refTokenCount = referenceTokens ? referenceTokens[0].length : null;
+    const estimateForChunk = value => paddedTargetTokens(value, referenceText, refTokenCount, speed);
+    const chunks = splitTextIntoChunks(text, estimateForChunk);
+    if (!chunks.length) throw new Error('No text could be prepared for synthesis.');
+
+    const steps = Number(stepsSlider.value);
+    const generationUnitOffset = voiceMode === 'clone' ? 1 : 0;
+    const unitsPerChunk = steps + 2; // diffusion + decode + finalize
+    runTotalUnits = generationUnitOffset + chunks.length * unitsPerChunk + 1;
+    runCompletedUnits = generationUnitOffset;
+    rng = mulberry32((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) | 0);
+    const audioParts = [];
+    const estimatedSeconds = chunks.reduce((sum, chunk) => sum + estimateForChunk(chunk) / TOKENS_PER_SECOND, 0);
+    setRunProgress({
+      completed: runCompletedUnits,
+      total: runTotalUnits,
+      phase: `${chunks.length} chunk${chunks.length === 1 ? '' : 's'} planned`,
+      chunkText: `Estimated audio ${formatClock(estimatedSeconds)} · up to ${(MAX_CHUNK_AUDIO_TOKENS / TOKENS_PER_SECOND).toFixed(0)}s per chunk`,
+    });
+    await new Promise(resolve => setTimeout(resolve, 180));
+
+    console.info('[OmniVoice] Automatic chunk plan', chunks.map((chunk, index) => ({ index: index + 1, text: chunk, targetTokens: estimateForChunk(chunk) })));
+
+    for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+      if (abortRequested) throw new Error('Generation cancelled.');
+      const chunk = chunks[chunkIndex];
+      const targetTokens = estimateForChunk(chunk);
+      const baseUnits = generationUnitOffset + chunkIndex * unitsPerChunk;
+      const chunkNumber = chunkIndex + 1;
+      const remainingChunks = chunks.length - chunkNumber;
+
+      genStep.textContent = 'prompt';
+      setRunProgress({
+        completed: baseUnits,
+        total: runTotalUnits,
+        phase: `Chunk ${chunkNumber}/${chunks.length} · preparing prompt`,
+        chunkText: `${remainingChunks} chunk${remainingChunks === 1 ? '' : 's'} remaining · ~${(targetTokens / TOKENS_PER_SECOND).toFixed(1)}s target`,
+      });
+      const inputs = await prepareInferenceInputs(chunk, targetTokens, { refText: referenceTokens ? referenceText : null, refAudioTokens: referenceTokens, lang: null, instruct: null });
+
+      const tokens = await generateIterative(inputs, steps, 4.0, 0.05, 5.0, 5.0, {
+        chunkIndex, chunkCount: chunks.length, baseUnits, totalUnits: runTotalUnits, targetTokens,
+      });
+      if (abortRequested) throw new Error('Generation cancelled.');
+
+      genStep.textContent = 'decoding';
+      setRunProgress({
+        completed: baseUnits + steps + .25,
+        total: runTotalUnits,
+        phase: `Chunk ${chunkNumber}/${chunks.length} · decoding audio`,
+        chunkText: `${remainingChunks} chunk${remainingChunks === 1 ? '' : 's'} remaining · converting ${targetTokens} tokens`,
+      });
+      const rawWaveform = await decodeTokens(tokens, config.num_audio_codebook, targetTokens);
+      const waveform = postProcessAudio(rawWaveform, config.sampling_rate, chunkIndex > 0);
+      audioParts.push(waveform);
+      setRunProgress({
+        completed: baseUnits + steps + 2,
+        total: runTotalUnits,
+        phase: `Chunk ${chunkNumber}/${chunks.length} complete`,
+        chunkText: `${remainingChunks} chunk${remainingChunks === 1 ? '' : 's'} remaining · ${(waveform.length / config.sampling_rate).toFixed(1)}s rendered`,
+      });
+      console.info('[OmniVoice] Chunk complete', { chunk: chunkNumber, chunks: chunks.length, targetTokens, samples: waveform.length, duration: waveform.length / config.sampling_rate });
+    }
+
+    genStep.textContent = 'joining';
+    setRunProgress({ completed: runTotalUnits - 1, total: runTotalUnits, phase: 'Finalizing audio', chunkText: `Joining ${audioParts.length} segment${audioParts.length === 1 ? '' : 's'} with seamless crossfades` });
+    const waveform = concatenateAudio(audioParts, config.sampling_rate);
+    audioBlob = createWavBlob(waveform, config.sampling_rate);
+    const previousUrl = audioPlayer.dataset.objectUrl;
+    if (previousUrl) URL.revokeObjectURL(previousUrl);
+    const url = URL.createObjectURL(audioBlob);
+    audioPlayer.dataset.objectUrl = url; audioPlayer.src = url; outputPanel.classList.add('visible');
+    setRunProgress({ completed: runTotalUnits, total: runTotalUnits, phase: 'Generation complete', chunkText: `${formatClock(waveform.length / config.sampling_rate)} audio · ${chunks.length} chunk${chunks.length === 1 ? '' : 's'}`, eta: 0 });
+    await audioPlayer.play().catch(() => {});
+    setStatus('ready', 'READY');
+    console.info('[OmniVoice] Generation complete', { chunks: chunks.length, samples: waveform.length, duration: waveform.length / config.sampling_rate, backend: actualBackend });
+    await new Promise(resolve => setTimeout(resolve, 650));
+  } catch (error) {
+    if (String(error?.message || error).toLowerCase().includes('cancel')) {
+      setStatus('ready', 'CANCELLED');
+      setRunProgress({ phase: 'Generation cancelled', chunkText: 'Stopped after the current model step', eta: 0 });
+    } else {
+      console.error('[OmniVoice] Generation failed', error); setStatus('error', 'GENERATION ERROR');
+      alert(`OmniVoice generation failed:
+
+${error.message || error}`);
+    }
+  } finally {
+    isGenerating = false; abortRequested = false; setUIEnabled(true);
+    generateBtn.style.display = 'inline-flex'; stopBtn.style.display = 'none';
+    genIndicator.classList.remove('visible'); genStep.textContent = '';
+  }
+}
+
+generateBtn.addEventListener('click', generate);
+textInput.addEventListener('keydown', (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') generate();
+});
+stopBtn.addEventListener('click', () => {
+  abortRequested = true;
+  genStatus.textContent = 'Stop requested · finishing the current model step';
+  runChunk.textContent = 'The current WebGPU call cannot be interrupted mid-step';
+});
+downloadBtn.addEventListener('click', () => {
+  if (!audioBlob) return;
+  const url = URL.createObjectURL(audioBlob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `omnivoice-${Date.now()}.wav`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+retryBtn.addEventListener('click', () => location.reload());
+
+initialize();
+
+</script>
+</body>
+</html>
